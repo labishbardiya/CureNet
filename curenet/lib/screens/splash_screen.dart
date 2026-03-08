@@ -1,0 +1,217 @@
+import 'package:flutter/material.dart';
+import '../core/theme.dart';
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  int currentSlide = 0;
+
+  final List<Map<String, dynamic>> slides = [
+    {
+      "icon": "🌿",
+      "title": "Your Health,\nOne Place",
+      "desc": "All your medical records from every hospital and clinic — safe, secure, always with you."
+    },
+    {
+      "icon": "🤖",
+      "title": "ABHAy\nAI Assistant",
+      "desc": "Ask questions about your health in Hindi or English. Get simple, clear answers anytime."
+    },
+    {
+      "icon": "📲",
+      "title": "Share with\nDoctors",
+      "desc": "Show your records via QR code. You decide what doctors see. Always in control."
+    },
+    {
+      "icon": "🛡️",
+      "title": "Zero-Knowledge\nSecurity",
+      "desc": "Your data is encrypted and DPDP Act 2023 compliant. Only you can grant access."
+    },
+    {
+      "icon": "🌐",
+      "title": "Works Offline &\nIn 22 Languages",
+      "desc": "Access your records even without internet. Available in Hindi, Tamil, Telugu and 19 more."
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final slide = slides[currentSlide];
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Header – exact v5 (logo + language picker)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(26, 44, 26, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: const Color(0xFFD8DDE6), width: 1.5),
+                        ),
+                        child: const Center(
+                          child: Text("❤️", style: TextStyle(fontSize: 28)),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      const Text(
+                        "CureNet",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF0D2240),
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                  // Language picker (opens lang-select)
+                  GestureDetector(
+                    onTap: () => Navigator.pushNamed(context, '/language-select'),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5F7FA),
+                        border: Border.all(color: const Color(0xFFD8DDE6), width: 2),
+                        borderRadius: BorderRadius.circular(22),
+                      ),
+                      child: const Row(
+                        children: [
+                          Text("🇮🇳", style: TextStyle(fontSize: 15)),
+                          SizedBox(width: 6),
+                          Text("English", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                          SizedBox(width: 4),
+                          Text("▼", style: TextStyle(fontSize: 11, color: Color(0xFF9BA8BB))),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const Spacer(),
+
+            // Big illustration circle (v5 exact)
+            Container(
+              width: 170,
+              height: 170,
+              decoration: BoxDecoration(
+                color: const Color(0xFFE8F7F7),
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Container(
+                  width: 110,
+                  height: 110,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF00C4C4),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      slide["icon"],
+                      style: const TextStyle(fontSize: 48),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 36),
+
+            // Title & Description
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 28),
+              child: Column(
+                children: [
+                  Text(
+                    slide["title"],
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w900,
+                      height: 1.2,
+                      color: Color(0xFF0D2240),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    slide["desc"],
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      height: 1.5,
+                      color: Color(0xFF5A6880),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const Spacer(),
+
+            // Slide dots
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                slides.length,
+                (i) => Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: currentSlide == i ? 24 : 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: currentSlide == i ? const Color(0xFF00A3A3) : const Color(0xFFD8DDE6),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            // Next / Get Started button
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ElevatedButton(
+                onPressed: () {
+                  if (currentSlide < slides.length - 1) {
+                    setState(() => currentSlide++);
+                  } else {
+                    Navigator.pushNamed(context, '/language-select');
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0D2240),
+                  minimumSize: const Size(double.infinity, 54),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                ),
+                child: Text(
+                  currentSlide == slides.length - 1 ? "Get Started" : "Next →",
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 32),
+          ],
+        ),
+      ),
+    );
+  }
+}
