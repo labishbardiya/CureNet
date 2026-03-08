@@ -11,6 +11,13 @@ import 'screens/profile_screen.dart';
 import 'screens/notifications_screen.dart';
 import 'screens/health_locker_screen.dart';
 import 'screens/edge_cases_screen.dart';
+import 'screens/chat_screen.dart';
+import 'screens/records_screen.dart';
+import 'screens/qr_share_screen.dart';
+import 'screens/access_request_screen.dart';
+import 'screens/access_granted_screen.dart';
+import 'screens/doc_scan_screen.dart';
+
 
 void main() {
   runApp(const CureNetApp());
@@ -38,6 +45,12 @@ class CureNetApp extends StatelessWidget {
         '/notifications': (context) => const NotificationsScreen(),
         '/health-locker': (context) => const HealthLockerScreen(),
         '/edge': (context) => const EdgeCasesScreen(),
+        '/chat': (context) => const ChatScreen(),
+        '/records': (context) => const RecordsScreen(),
+        '/qr-share': (context) => const QrShareScreen(),
+        '/access-req': (context) => const AccessRequestScreen(),
+        '/access-ok': (context) => const AccessGrantedScreen(),
+        '/doc-scan': (context) => const DocScanScreen(),
       },
     );
   }
