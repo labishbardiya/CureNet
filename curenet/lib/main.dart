@@ -1,6 +1,6 @@
+import 'package:curenet/screens/login_options_screen.dart';
 import 'package:flutter/material.dart';
 import 'core/theme.dart';
-import 'core/app_language.dart';
 import 'screens/splash_screen.dart';
 import 'screens/language_select_screen.dart';
 import 'screens/login_options_screen.dart';
@@ -17,13 +17,13 @@ import 'screens/qr_share_screen.dart';
 import 'screens/access_request_screen.dart';
 import 'screens/access_granted_screen.dart';
 import 'screens/doc_scan_screen.dart';
-import 'core/voice_helper.dart';
-
-
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await AppLanguage.load();
-  await VoiceHelper.init();
+import 'screens/register_abha_screen.dart';
+import 'screens/register_options_screen.dart';
+import 'screens/create_abha_mobile_screen.dart';
+import 'screens/privacy_notice_screen.dart';
+import 'screens/register_mobile_details_screen.dart';
+import 'screens/mobile_otp_verify_screen.dart';
+void main() {
   runApp(const CureNetApp());
 }
 
@@ -55,6 +55,12 @@ class CureNetApp extends StatelessWidget {
         '/access-req': (context) => const AccessRequestScreen(),
         '/access-ok': (context) => const AccessGrantedScreen(),
         '/doc-scan': (context) => const DocScanScreen(),
+        '/register-options': (context) => const RegisterOptionsScreen(),
+        '/create-abha-mobile': (context) => const CreateAbhaMobileScreen(),
+        '/mobile-otp-verify': (context) => const MobileOtpVerifyScreen(),
+        '/register-mobile-details': (context) => const RegisterMobileDetailsScreen(),
+        '/privacy-notice': (context) => const PrivacyNoticeScreen(),
+        '/register-abha': (context) => const RegisterAbhaScreen(),
       },
     );
   }
