@@ -17,6 +17,9 @@ import 'screens/qr_share_screen.dart';
 import 'screens/access_request_screen.dart';
 import 'screens/access_granted_screen.dart';
 import 'screens/doc_scan_screen.dart';
+import 'screens/create_abha_mobile_screen.dart';
+import 'screens/mobile_otp_verify_screen.dart';
+import 'screens/register_options_screen.dart';
 
 
 void main() {
@@ -51,6 +54,10 @@ class CureNetApp extends StatelessWidget {
         '/access-req': (context) => const AccessRequestScreen(),
         '/access-ok': (context) => const AccessGrantedScreen(),
         '/doc-scan': (context) => const DocScanScreen(),
+
+        '/register-options': (context) => const RegisterOptionsScreen(),
+        '/create-abha-mobile': (context) => const CreateAbhaMobileScreen(),
+        '/mobile-otp-verify': (context) => const MobileOtpVerifyScreen(),
       },
     );
   }
