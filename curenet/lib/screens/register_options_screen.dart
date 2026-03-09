@@ -9,7 +9,7 @@ class RegisterOptionsScreen extends StatefulWidget {
 }
 
 class _RegisterOptionsScreenState extends State<RegisterOptionsScreen> {
-  String selectedMethod = ''; // 'mobile', 'email', 'aadhaar'
+  String selectedMethod = '';
 
   void selectMethod(String method) {
     setState(() => selectedMethod = method);
@@ -22,7 +22,7 @@ class _RegisterOptionsScreenState extends State<RegisterOptionsScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header – exact v5
+            // Header – exact screenshot
             Container(
               padding: const EdgeInsets.fromLTRB(18, 44, 18, 14),
               decoration: const BoxDecoration(
@@ -52,117 +52,24 @@ class _RegisterOptionsScreenState extends State<RegisterOptionsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Choose how to create\nyour ABHA',
+                      'Create your ABHA',
                       style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
                     ),
-                    const SizedBox(height: 24),
-
-                    // Mobile Option Card
-                    GestureDetector(
-                      onTap: () => selectMethod('mobile'),
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: selectedMethod == 'mobile' ? const Color(0xFFE8F7F7) : Colors.white,
-                          border: Border.all(
-                            color: selectedMethod == 'mobile' ? const Color(0xFF00A3A3) : const Color(0xFFD8DDE6),
-                            width: selectedMethod == 'mobile' ? 2 : 1,
-                          ),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFE8F7F7),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Icon(Icons.phone_android, size: 24, color: Color(0xFF00A3A3)),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Mobile Number',
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
-                                  ),
-                                  Text(
-                                    'Use your Indian mobile number to create ABHA',
-                                    style: TextStyle(fontSize: 14, color: Color(0xFF9BA8BB)),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            if (selectedMethod == 'mobile')
-                              const Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF00A3A3)),
-                          ],
-                        ),
-                      ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Your free digital health ID',
+                      style: TextStyle(fontSize: 14, color: Color(0xFF9BA8BB)),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 32),
 
-                    // Email Option Card
-                    GestureDetector(
-                      onTap: () => selectMethod('email'),
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: selectedMethod == 'email' ? const Color(0xFFE8F7F7) : Colors.white,
-                          border: Border.all(
-                            color: selectedMethod == 'email' ? const Color(0xFF00A3A3) : const Color(0xFFD8DDE6),
-                            width: selectedMethod == 'email' ? 2 : 1,
-                          ),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFE8F7F7),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Icon(Icons.email_outlined, size: 24, color: Color(0xFF00A3A3)),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Email Address',
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
-                                  ),
-                                  Text(
-                                    'Use your email to create ABHA',
-                                    style: TextStyle(fontSize: 14, color: Color(0xFF9BA8BB)),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            if (selectedMethod == 'email')
-                              const Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF00A3A3)),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Aadhaar Option Card
+                    // Aadhaar Card (recommended – teal border)
                     GestureDetector(
                       onTap: () => selectMethod('aadhaar'),
                       child: Container(
                         width: double.infinity,
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: selectedMethod == 'aadhaar' ? const Color(0xFFE8F7F7) : Colors.white,
+                          color: selectedMethod == 'aadhaar' ? const Color(0xFFE8F7F7) : Colors.transparent,
                           border: Border.all(
                             color: selectedMethod == 'aadhaar' ? const Color(0xFF00A3A3) : const Color(0xFFD8DDE6),
                             width: selectedMethod == 'aadhaar' ? 2 : 1,
@@ -185,19 +92,122 @@ class _RegisterOptionsScreenState extends State<RegisterOptionsScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    'Aadhaar Number',
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
+                                  Row(
+                                    children: [
+                                      const Text(
+                                        'Use Aadhaar Number ',
+                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
+                                      ),
+                                      if (selectedMethod == 'aadhaar') const Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF00A3A3)),
+                                    ],
                                   ),
-                                  Text(
-                                    'Use your Aadhaar for quick verification',
+                                  const Text(
+                                    'Quick verification with your Aadhaar',
                                     style: TextStyle(fontSize: 14, color: Color(0xFF9BA8BB)),
                                   ),
                                 ],
                               ),
                             ),
-                            if (selectedMethod == 'aadhaar')
-                              const Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF00A3A3)),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Mobile Card
+                    GestureDetector(
+                      onTap: () => selectMethod('mobile'),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: selectedMethod == 'mobile' ? const Color(0xFFE8F7F7) : Colors.transparent,
+                          border: Border.all(
+                            color: selectedMethod == 'mobile' ? const Color(0xFF00A3A3) : const Color(0xFFD8DDE6),
+                            width: selectedMethod == 'mobile' ? 2 : 1,
+                          ),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE8F7F7),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(Icons.phone_android_outlined, size: 24, color: Color(0xFF00A3A3)),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Text(
+                                        'Use Mobile Number',
+                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
+                                      ),
+                                      if (selectedMethod == 'mobile') const Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF00A3A3)),
+                                    ],
+                                  ),
+                                  const Text(
+                                    'Create with your Indian mobile number',
+                                    style: TextStyle(fontSize: 14, color: Color(0xFF9BA8BB)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Already Have ABHA Card (with login button)
+                    GestureDetector(
+                      onTap: () => selectMethod('login'),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: selectedMethod == 'login' ? const Color(0xFFE8F7F7) : Colors.transparent,
+                          border: Border.all(
+                            color: selectedMethod == 'login' ? const Color(0xFF00A3A3) : const Color(0xFFD8DDE6),
+                            width: selectedMethod == 'login' ? 2 : 1,
+                          ),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE8F7F7),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(Icons.account_circle_outlined, size: 24, color: Color(0xFF00A3A3)),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Already have ABHA?',
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
+                                  ),
+                                  const Text(
+                                    'Already registered? Login',
+                                    style: TextStyle(fontSize: 14, color: Color(0xFF9BA8BB)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (selectedMethod == 'login') const Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF00A3A3)),
                           ],
                         ),
                       ),
@@ -206,19 +216,20 @@ class _RegisterOptionsScreenState extends State<RegisterOptionsScreen> {
                 ),
               ),
             ),
-
-            // Continue button
             Padding(
               padding: const EdgeInsets.all(18),
               child: ElevatedButton(
                 onPressed: selectedMethod.isEmpty ? null : () {
-                  // Navigate based on selection
                   if (selectedMethod == 'mobile') {
                     Navigator.pushNamed(context, '/create-abha-mobile');
-                  } else if (selectedMethod == 'email') {
-                    // TODO: Email flow
                   } else if (selectedMethod == 'aadhaar') {
                     // TODO: Aadhaar flow
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Aadhaar flow coming soon!')),
+                    );
+                  } else if (selectedMethod == 'login') {
+                    // TODO: Login flow
+                    Navigator.pushNamed(context, '/login-options');
                   }
                 },
                 style: ElevatedButton.styleFrom(

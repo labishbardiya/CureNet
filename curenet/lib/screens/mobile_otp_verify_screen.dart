@@ -22,6 +22,7 @@ class _MobileOtpVerifyScreenState extends State<MobileOtpVerifyScreen> {
   }
 
   void _startTimer() {
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_timerSeconds > 0) {
         setState(() => _timerSeconds--);
@@ -39,7 +40,6 @@ class _MobileOtpVerifyScreenState extends State<MobileOtpVerifyScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header – exact v5
             Container(
               padding: const EdgeInsets.fromLTRB(18, 44, 18, 14),
               decoration: const BoxDecoration(
@@ -61,7 +61,6 @@ class _MobileOtpVerifyScreenState extends State<MobileOtpVerifyScreen> {
                 ],
               ),
             ),
-
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(18),
@@ -88,8 +87,6 @@ class _MobileOtpVerifyScreenState extends State<MobileOtpVerifyScreen> {
                       ),
                     ),
                     const SizedBox(height: 32),
-
-                    // OTP Input Row
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: List.generate(6, (index) => SizedBox(
@@ -116,8 +113,7 @@ class _MobileOtpVerifyScreenState extends State<MobileOtpVerifyScreen> {
                             if (value.length == 1 && index < 5) {
                               FocusScope.of(context).nextFocus();
                             }
-                            if (value.length == 6) {
-                              // Auto-submit
+                            if (_otpControllers.every((c) => c.text.length == 1)) {
                               Navigator.pushNamed(context, '/register-mobile-details');
                             }
                           },
@@ -125,8 +121,6 @@ class _MobileOtpVerifyScreenState extends State<MobileOtpVerifyScreen> {
                       )),
                     ),
                     const SizedBox(height: 32),
-
-                    // Resend OTP
                     GestureDetector(
                       onTap: _resendEnabled ? () {
                         setState(() {

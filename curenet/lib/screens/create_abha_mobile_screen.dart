@@ -19,7 +19,6 @@ class _CreateAbhaMobileScreenState extends State<CreateAbhaMobileScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header – exact v5
             Container(
               padding: const EdgeInsets.fromLTRB(18, 44, 18, 14),
               decoration: const BoxDecoration(
@@ -41,7 +40,6 @@ class _CreateAbhaMobileScreenState extends State<CreateAbhaMobileScreen> {
                 ],
               ),
             ),
-
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(18),
@@ -58,7 +56,6 @@ class _CreateAbhaMobileScreenState extends State<CreateAbhaMobileScreen> {
                       style: TextStyle(fontSize: 15, color: Color(0xFF9BA8BB)),
                     ),
                     const SizedBox(height: 24),
-
                     TextField(
                       controller: _mobileController,
                       keyboardType: TextInputType.phone,
@@ -80,14 +77,10 @@ class _CreateAbhaMobileScreenState extends State<CreateAbhaMobileScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-
-                    // Terms checkbox
                     Row(
                       children: [
                         GestureDetector(
-                          onTap: () {
-                            setState(() => _termsAgreed = !_termsAgreed);
-                          },
+                          onTap: () => setState(() => _termsAgreed = !_termsAgreed),
                           child: Container(
                             width: 20,
                             height: 20,
@@ -137,8 +130,6 @@ class _CreateAbhaMobileScreenState extends State<CreateAbhaMobileScreen> {
                 ),
               ),
             ),
-
-            // Continue button
             Padding(
               padding: const EdgeInsets.all(18),
               child: ElevatedButton(
