@@ -34,7 +34,7 @@ class LoginOptionsScreen extends StatelessWidget {
                         builder: (context, language, _) {
                           return Row(
                             children: [
-                              const Text("🌐", style: TextStyle(fontSize: 18)),
+                              const Icon(Icons.language, size: 18, color: Color(0xFF0D2240)),
                               const SizedBox(width: 6),
                               Text(
                                 language,
@@ -78,9 +78,10 @@ class LoginOptionsScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(28),
                             ),
                             child: const Center(
-                              child: Text(
-                                "❤️",
-                                style: TextStyle(fontSize: 32),
+                              child: Icon(
+                                Icons.health_and_safety,
+                                size: 32,
+                                color: Color(0xFF0D2240),
                               ),
                             ),
                           ),
@@ -146,7 +147,7 @@ class LoginOptionsScreen extends StatelessWidget {
                 // Mobile Option
                 _buildOptionCard(
                   context,
-                  icon: "📱",
+                  icon: Icons.phone_android,
                   iconColor: const Color(0xFFE07B39),
                   title: "Mobile Number",
                   onTap: () => Navigator.pushNamed(context, '/login-mobile'),
@@ -157,7 +158,7 @@ class LoginOptionsScreen extends StatelessWidget {
                 // Aadhaar Option
                 _buildOptionCard(
                   context,
-                  icon: "🪪",
+                  icon: Icons.badge,
                   iconColor: const Color(0xFF00A3A3),
                   title: "Aadhaar Card",
                   onTap: () => Navigator.pushNamed(context, '/login-aadhaar'),
@@ -170,7 +171,7 @@ class LoginOptionsScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: _buildSmallTile(
-                        icon: "🔢",
+                        icon: Icons.pin,
                         label: "ABHA Number",
                         onTap: () => Navigator.pushNamed(context, '/login-abha-num'),
                       ),
@@ -178,7 +179,7 @@ class LoginOptionsScreen extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: _buildSmallTile(
-                        icon: "🆔",
+                        icon: Icons.perm_identity,
                         label: "ABHA Address",
                         onTap: () => Navigator.pushNamed(context, '/login-abha-addr'),
                       ),
@@ -209,7 +210,7 @@ class LoginOptionsScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(13),
                           ),
                           child: const Center(
-                            child: Text("➕", style: TextStyle(fontSize: 22, color: Colors.white)),
+                            child: Icon(Icons.add, size: 22, color: Colors.white),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -254,7 +255,7 @@ class LoginOptionsScreen extends StatelessWidget {
 
   Widget _buildOptionCard(
     BuildContext context, {
-    required String icon,
+    required IconData icon,
     required Color iconColor,
     required String title,
     required VoidCallback onTap,
@@ -278,7 +279,7 @@ class LoginOptionsScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Center(
-                child: Text(icon, style: TextStyle(fontSize: 26, color: iconColor)),
+                child: Icon(icon, size: 26, color: iconColor),
               ),
             ),
             const SizedBox(width: 14),
@@ -303,7 +304,7 @@ class LoginOptionsScreen extends StatelessWidget {
   }
 
   Widget _buildSmallTile({
-    required String icon,
+    required IconData icon,
     required String label,
     required VoidCallback onTap,
   }) {
@@ -317,7 +318,7 @@ class LoginOptionsScreen extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text(icon, style: const TextStyle(fontSize: 22)),
+            Icon(icon, size: 22, color: const Color(0xFF0D2240)),
             const SizedBox(height: 6),
             TranslatedText(
               label,

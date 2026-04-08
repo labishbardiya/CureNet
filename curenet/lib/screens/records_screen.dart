@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/theme.dart';
 import '../core/voice_helper.dart';
 import 'package:curenet/core/navigation_helper.dart';
+import '../core/translated_text.dart';
 
 class RecordsScreen extends StatefulWidget {
   const RecordsScreen({super.key});
@@ -14,12 +15,12 @@ class _RecordsScreenState extends State<RecordsScreen> {
   int activeTab = 0;
   final List<String> tabs = ["All", "Recent", "Prescriptions", "Labs", "Reports"];
 
-  final List<Map<String, String>> allRecords = [
-    {"title": "Blood Test Report", "date": "22 Feb 2026", "doctor": "Dr. Meena Kapoor", "type": "🧪", "color": "#00A3A3"},
-    {"title": "Prescription - Hypertension", "date": "18 Feb 2026", "doctor": "Dr. Suresh Kumar", "type": "💊", "color": "#E07B39"},
-    {"title": "Chest X-Ray", "date": "05 Feb 2026", "doctor": "Dr. Anjali Mehta", "type": "🩻", "color": "#6B4E9B"},
-    {"title": "Lipid Profile", "date": "28 Jan 2026", "doctor": "Dr. Meena Kapoor", "type": "🧪", "color": "#00A3A3"},
-    {"title": "ECG Report", "date": "15 Jan 2026", "doctor": "Dr. Suresh Kumar", "type": "❤️", "color": "#D63B3B"},
+  final List<Map<String, dynamic>> allRecords = [
+    {"title": "Blood Test Report", "date": "22 Feb 2026", "doctor": "Dr. Meena Kapoor", "type": Icons.science, "color": "#00A3A3"},
+    {"title": "Prescription - Hypertension", "date": "18 Feb 2026", "doctor": "Dr. Suresh Kumar", "type": Icons.medication, "color": "#E07B39"},
+    {"title": "Chest X-Ray", "date": "05 Feb 2026", "doctor": "Dr. Anjali Mehta", "type": Icons.medical_services, "color": "#6B4E9B"},
+    {"title": "Lipid Profile", "date": "28 Jan 2026", "doctor": "Dr. Meena Kapoor", "type": Icons.science, "color": "#00A3A3"},
+    {"title": "ECG Report", "date": "15 Jan 2026", "doctor": "Dr. Suresh Kumar", "type": Icons.favorite, "color": "#D63B3B"},
   ];
 
   @override
@@ -44,8 +45,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
                   child: const Text("←", style: TextStyle(fontSize: 26, color: Color(0xFF0D2240))),
                 ),
                 const SizedBox(width: 12),
-                const Text(
-                  "Health Records",
+                const TranslatedText("Health Records",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Color(0xFF0D2240)),
                 ),
                 const Spacer(),
@@ -79,7 +79,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
                           : [],
                     ),
                     alignment: Alignment.center,
-                    child: Text(
+                    child: TranslatedText(
                       tabs[index],
                       style: TextStyle(
                         fontSize: 13,
@@ -144,7 +144,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
                             borderRadius: BorderRadius.circular(14),
                           ),
                           child: Center(
-                            child: Text(record['type']!, style: const TextStyle(fontSize: 24)),
+                            child: Icon(record['type'] as IconData, size: 24, color: Colors.white),
                           ),
                         ),
                         const SizedBox(width: 14),
@@ -152,11 +152,11 @@ class _RecordsScreenState extends State<RecordsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              TranslatedText(
                                 record['title']!,
                                 style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
                               ),
-                              Text(
+                              TranslatedText(
                                 record['doctor']!,
                                 style: const TextStyle(fontSize: 12, color: Color(0xFF9BA8BB)),
                               ),
@@ -195,9 +195,9 @@ class _RecordsScreenState extends State<RecordsScreen> {
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("📷 ", style: TextStyle(fontSize: 20)),
-                  Text(
-                    "Upload New Record",
+                  Icon(Icons.camera_alt, size: 20, color: Colors.white),
+                  SizedBox(width: 8),
+                  TranslatedText("Upload New Record",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                   ),
                 ],
@@ -217,25 +217,25 @@ class _RecordsScreenState extends State<RecordsScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _navItem("🏠", "Home", false, () => Navigator.pushReplacementNamed(context, '/home')),
-            _navItem("🤖", "ABHAy", false, () => Navigator.pushReplacementNamed(context, '/chat')),
+            _navItem(Icons.home, "Home", false, () => Navigator.pushReplacementNamed(context, '/home')),
+            _navItem(Icons.smart_toy, "ABHAy", false, () => Navigator.pushReplacementNamed(context, '/chat')),
             _scanButton(context),
-            _navItem("📋", "Records", true, null),
-            _navItem("📲", "Share", false, () => Navigator.pushNamed(context, '/qr-share')),
+            _navItem(Icons.list_alt, "Records", true, null),
+            _navItem(Icons.share, "Share", false, () => Navigator.pushNamed(context, '/qr-share')),
           ],
         ),
       ),
     );
   }
 
-  Widget _navItem(String icon, String label, bool active, VoidCallback? onTap) {
+  Widget _navItem(IconData icon, String label, bool active, VoidCallback? onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(icon, style: TextStyle(fontSize: 22, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
-          Text(
+          Icon(icon, size: 22, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB)),
+          TranslatedText(
             label,
             style: TextStyle(
               fontSize: 10,
@@ -265,8 +265,9 @@ class _RecordsScreenState extends State<RecordsScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("📷", style: TextStyle(fontSize: 20, color: Colors.white)),
-                  Text("SCAN", style: TextStyle(fontSize: 7, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
+                  Icon(Icons.camera_alt, size: 20, color: Colors.white),
+                  SizedBox(height: 2),
+                  TranslatedText("SCAN", style: TextStyle(fontSize: 7, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
                 ],
               ),
             ),
