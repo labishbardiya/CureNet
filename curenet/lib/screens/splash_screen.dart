@@ -38,27 +38,27 @@ class _SplashScreenState extends State<SplashScreen> {
 
   final List<Map<String, dynamic>> slides = [
     {
-      "icon": "🌿",
+      "icon": Icons.eco,
       "title": "Your Health,\nOne Place",
       "desc": "All your medical records from every hospital and clinic — safe, secure, always with you."
     },
     {
-      "icon": "🤖",
+      "icon": Icons.smart_toy,
       "title": "ABHAy\nAI Assistant",
       "desc": "Ask questions about your health in Hindi or English. Get simple, clear answers anytime."
     },
     {
-      "icon": "📲",
+      "icon": Icons.qr_code_scanner,
       "title": "Share with\nDoctors",
       "desc": "Show your records via QR code. You decide what doctors see. Always in control."
     },
     {
-      "icon": "🛡️",
+      "icon": Icons.shield,
       "title": "Zero-Knowledge\nSecurity",
       "desc": "Your data is encrypted and DPDP Act 2023 compliant. Only you can grant access."
     },
     {
-      "icon": "🌐",
+      "icon": Icons.language,
       "title": "Works Offline &\nIn 22 Languages",
       "desc": "Access your records even without internet. Available in Hindi, Tamil, Telugu and 19 more."
     },
@@ -89,8 +89,15 @@ class _SplashScreenState extends State<SplashScreen> {
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(color: const Color(0xFFD8DDE6), width: 1.5),
                         ),
-                        child: const Center(
-                          child: Text("❤️", style: TextStyle(fontSize: 28)),
+                        child: Center(
+                          child: Image.asset(
+                            'assets/images/curenet_logo.png',
+                            width: 28,
+                            height: 28,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(Icons.health_and_safety, size: 28, color: Color(0xFFD32F2F));
+                            },
+                          ),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -120,7 +127,7 @@ class _SplashScreenState extends State<SplashScreen> {
                         builder: (context, language, _) {
                           return Row(
                             children: [
-                              const Text("🇮🇳", style: TextStyle(fontSize: 15)),
+                              const Icon(Icons.flag, size: 15, color: Color(0xFF0D2240)),
                               const SizedBox(width: 6),
                               Text(
                                 language,
@@ -166,9 +173,10 @@ class _SplashScreenState extends State<SplashScreen> {
                     shape: BoxShape.circle,
                   ),
                   child: Center(
-                    child: Text(
-                      slide["icon"],
-                      style: const TextStyle(fontSize: 48),
+                    child: Icon(
+                      slide["icon"] as IconData,
+                      size: 48,
+                      color: Colors.white,
                     ),
                   ),
                 ),

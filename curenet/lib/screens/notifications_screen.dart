@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/theme.dart';
 import '../core/voice_helper.dart';
 import 'package:curenet/core/navigation_helper.dart';
+import '../core/translated_text.dart';
 
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});
@@ -25,8 +26,7 @@ class NotificationsScreen extends StatelessWidget {
                   child: const Text("←", style: TextStyle(fontSize: 26, color: Colors.white)),
                 ),
                 const SizedBox(width: 12),
-                const Text(
-                  "Notifications",
+                const TranslatedText("Notifications",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Colors.white),
                 ),
               ],
@@ -39,7 +39,7 @@ class NotificationsScreen extends StatelessWidget {
               children: [
                 _notificationCard(
                   context: context,
-                  icon: "📋",
+                  icon: Icons.list_alt,
                   iconColor: const Color(0xFF00A3A3),
                   title: "New Health Record Added",
                   subtitle: "Dr. Meena Kapoor added a new prescription record from Apollo Spectra.",
@@ -49,7 +49,7 @@ class NotificationsScreen extends StatelessWidget {
                 const SizedBox(height: 12),
                 _notificationCard(
                   context: context,
-                  icon: "🔔",
+                  icon: Icons.notifications,
                   iconColor: const Color(0xFFD63B3B),
                   title: "Doctor Access Request",
                   subtitle: "Dr. Suresh Kumar (Apollo Spectra) is requesting access to your health records.",
@@ -59,7 +59,7 @@ class NotificationsScreen extends StatelessWidget {
                 const SizedBox(height: 12),
                 _notificationCard(
                   context: context,
-                  icon: "✅",
+                  icon: Icons.check_circle,
                   iconColor: const Color(0xFF22A36A),
                   title: "Follow-up Reminder",
                   subtitle: "Your cardiology follow-up with Dr. Meena Kapoor is due in 3 days.",
@@ -69,7 +69,7 @@ class NotificationsScreen extends StatelessWidget {
                 const SizedBox(height: 12),
                 _notificationCard(
                   context: context,
-                  icon: "💊",
+                  icon: Icons.medication,
                   iconColor: const Color(0xFF6B4E9B),
                   title: "Medication Reminder",
                   subtitle: "Take Amlodipine 5mg — your daily morning dose.",
@@ -92,11 +92,11 @@ class NotificationsScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _navItem("🏠", "Home", false, () => Navigator.pushReplacementNamed(context, '/home')),
-            _navItem("🤖", "ABHAy", false, () => Navigator.pushReplacementNamed(context, '/chat')),
+            _navItem(Icons.home, "Home", false, () => Navigator.pushReplacementNamed(context, '/home')),
+            _navItem(Icons.smart_toy, "ABHAy", false, () => Navigator.pushReplacementNamed(context, '/chat')),
             _scanButton(context),
-            _navItem("📋", "Records", false, () => Navigator.pushReplacementNamed(context, '/records')),
-            _navItem("📲", "Share", false, () => Navigator.pushReplacementNamed(context, '/qr-share')),
+            _navItem(Icons.list_alt, "Records", false, () => Navigator.pushReplacementNamed(context, '/records')),
+            _navItem(Icons.share, "Share", false, () => Navigator.pushReplacementNamed(context, '/qr-share')),
           ],
         ),
       ),
@@ -105,7 +105,7 @@ class NotificationsScreen extends StatelessWidget {
 
   Widget _notificationCard({
     required BuildContext context,
-    required String icon,
+    required IconData icon,
     required Color iconColor,
     required String title,
     required String subtitle,
@@ -130,7 +130,7 @@ class NotificationsScreen extends StatelessWidget {
               color: iconColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Center(child: Text(icon, style: TextStyle(fontSize: 20, color: iconColor))),
+            child: Center(child: Icon(icon, size: 20, color: iconColor)),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -147,7 +147,7 @@ class NotificationsScreen extends StatelessWidget {
                   style: const TextStyle(fontSize: 13, color: Color(0xFF5A6880), height: 1.4),
                 ),
                 const SizedBox(height: 8),
-                Text(
+                TranslatedText(
                   time,
                   style: const TextStyle(fontSize: 11, color: Color(0xFF9BA8BB)),
                 ),
@@ -184,14 +184,14 @@ class NotificationsScreen extends StatelessWidget {
     );
   }
 
-  Widget _navItem(String icon, String label, bool active, VoidCallback? onTap) {
+  Widget _navItem(IconData icon, String label, bool active, VoidCallback? onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(icon, style: TextStyle(fontSize: 22, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
-          Text(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
+          Icon(icon, size: 22, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB)),
+          TranslatedText(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
         ],
       ),
     );
@@ -214,8 +214,9 @@ class NotificationsScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("📷", style: TextStyle(fontSize: 20, color: Colors.white)),
-                  Text("SCAN", style: TextStyle(fontSize: 7, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
+                  Icon(Icons.camera_alt, size: 20, color: Colors.white),
+                  SizedBox(height: 2),
+                  TranslatedText("SCAN", style: TextStyle(fontSize: 7, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
                 ],
               ),
             ),

@@ -30,7 +30,7 @@ class HomeScreen extends StatelessWidget {
                           shape: BoxShape.circle,
                         ),
                         child: const Center(
-                          child: Text("P", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Colors.white)),
+                          child: Icon(Icons.person, color: Colors.white, size: 24),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -52,6 +52,10 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const Spacer(),
                 IconButton(
+                  icon: const Icon(Icons.translate, color: Color(0xFF0D2240)),
+                  onPressed: () => Navigator.pushNamed(context, '/language-select'),
+                ),
+                IconButton(
                   icon: const Icon(Icons.notifications_outlined, color: Color(0xFF0D2240)),
                   onPressed: () => Navigator.pushNamed(context, '/notifications'),
                 ),
@@ -67,7 +71,7 @@ class HomeScreen extends StatelessWidget {
             child: Row(
               children: const [
                 TranslatedText(
-                  "Good morning, Priya 👋",
+                  "Good morning, Priya",
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Color(0xFF0D2240)),
                 ),
               ],
@@ -105,7 +109,7 @@ class HomeScreen extends StatelessWidget {
                           color: Colors.white.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Center(child: Text("🤖", style: TextStyle(fontSize: 28))),
+                        child: const Center(child: Icon(Icons.smart_toy, size: 28, color: Colors.white)),
                       ),
                       const SizedBox(width: 14),
                       Expanded(
@@ -151,10 +155,10 @@ class HomeScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _quickAction(context, "📋", "Records", '/records'),
-                _quickAction(context, "📲", "Share QR", '/qr-share'),
-                _quickAction(context, "📷", "Scan Doc", '/doc-scan'),
-                _quickAction(context, "🔐", "Locker", '/health-locker'),
+                _quickAction(context, Icons.list_alt, "Records", '/records'),
+                _quickAction(context, Icons.qr_code_scanner, "Share QR", '/qr-share'),
+                _quickAction(context, Icons.document_scanner, "Scan Doc", '/doc-scan'),
+                _quickAction(context, Icons.lock_rounded, "Locker", '/health-locker'),
               ],
             ),
           ),
@@ -182,38 +186,18 @@ class HomeScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               scrollDirection: Axis.horizontal,
               children: [
-                _recordCard("Blood Test", "22 Feb 2026", "🧪"),
+                _recordCard("Blood Test", "22 Feb 2026", Icons.science),
                 const SizedBox(width: 12),
-                _recordCard("Prescription", "18 Feb 2026", "💊"),
+                _recordCard("Prescription", "18 Feb 2026", Icons.medication),
                 const SizedBox(width: 12),
-                _recordCard("X-Ray", "05 Feb 2026", "🩻"),
+                _recordCard("X-Ray", "05 Feb 2026", Icons.medical_services),
               ],
             ),
           ),
 
           const Spacer(),
 
-          // Change Language Button (your addition, now properly placed)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/language-select'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF00A3A3),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-              ),
-              child: const TranslatedText(
-                'Change Language',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
+
 
           // Bottom Navigation
           Container(
@@ -225,11 +209,11 @@ class HomeScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _bottomNavItem("🏠", "Home", true),
-                _bottomNavItem("🤖", "ABHAy", false, onTap: () => Navigator.pushNamed(context, '/chat')),
+                _bottomNavItem(Icons.home, "Home", true),
+                _bottomNavItem(Icons.smart_toy, "ABHAy", false, onTap: () => Navigator.pushNamed(context, '/chat')),
                 _scanButton(context),
-                _bottomNavItem("📋", "Records", false, onTap: () => Navigator.pushNamed(context, '/records')),
-                _bottomNavItem("📲", "Share", false, onTap: () => Navigator.pushNamed(context, '/qr-share')),
+                _bottomNavItem(Icons.list_alt, "Records", false, onTap: () => Navigator.pushNamed(context, '/records')),
+                _bottomNavItem(Icons.share, "Share", false, onTap: () => Navigator.pushNamed(context, '/qr-share')),
               ],
             ),
           ),
@@ -239,7 +223,7 @@ class HomeScreen extends StatelessWidget {
   }
 
   // Your existing helper methods (unchanged)
-  Widget _quickAction(BuildContext context, String emoji, String label, String route) {
+  Widget _quickAction(BuildContext context, IconData icon, String label, String route) {
     return GestureDetector(
       onTap: () => Navigator.pushNamed(context, route),
       child: Column(
@@ -252,7 +236,7 @@ class HomeScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 10)],
             ),
-            child: Center(child: Text(emoji, style: const TextStyle(fontSize: 24))),
+            child: Center(child: Icon(icon, size: 24, color: const Color(0xFF00A3A3))),
           ),
           const SizedBox(height: 6),
           TranslatedText(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF5A6880))),
@@ -261,7 +245,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _recordCard(String title, String date, String emoji) {
+  Widget _recordCard(String title, String date, IconData icon) {
     return Container(
       width: 118,
       padding: const EdgeInsets.all(12),
@@ -273,16 +257,16 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 22)),
+          Icon(icon, size: 22, color: const Color(0xFF0D2240)),
           const Spacer(),
-          Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
+          TranslatedText(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
           Text(date, style: const TextStyle(fontSize: 10, color: Color(0xFF9BA8BB))),
         ],
       ),
     );
   }
 
-  Widget _bottomNavItem(String icon, String label, bool isActive, {VoidCallback? onTap}) {
+  Widget _bottomNavItem(IconData icon, String label, bool isActive, {VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -295,7 +279,7 @@ class HomeScreen extends StatelessWidget {
               color: isActive ? const Color(0xFFE8F7F7) : Colors.transparent,
               borderRadius: BorderRadius.circular(13),
             ),
-            child: Center(child: Text(icon, style: const TextStyle(fontSize: 22))),
+            child: Center(child: Icon(icon, size: 22, color: isActive ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
           ),
           TranslatedText(
             label,
@@ -330,13 +314,14 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("📷", style: TextStyle(fontSize: 20, color: Colors.white)),
+                  Icon(Icons.camera_alt, size: 20, color: Colors.white),
+                  SizedBox(height: 2),
                   Text("SCAN", style: TextStyle(fontSize: 7, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
                 ],
               ),
             ),
           ),
-          const Text("Scan", style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Color(0xFF00A3A3))),
+          const TranslatedText("Scan", style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Color(0xFF00A3A3))),
         ],
       ),
     );

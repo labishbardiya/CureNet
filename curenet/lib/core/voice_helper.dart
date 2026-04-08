@@ -1,6 +1,8 @@
 import 'package:flutter_tts/flutter_tts.dart';
 import '../services/bhashini_tts_service.dart';
 import 'app_config.dart';
+import 'app_language.dart';
+import '../services/bhashini_translate_service.dart';
 
 /// Voice readout for Abhya – Bhashini TTS (22 Indian languages) with flutter_tts fallback.
 class VoiceHelper {
@@ -19,27 +21,37 @@ class VoiceHelper {
   }
 
   /// Speak [text] in [language] (e.g. "English", "Hindi"). Uses Bhashini if API key is set, else flutter_tts.
-  /// Returns true if speech started successfully.
+  /// Automatically translates [text] to the target language before speaking.
   static Future<bool> speak(String text, {String? language}) async {
     if (text.trim().isEmpty) return false;
     await init();
     lastError = null;
+
+    final lang = language ?? AppLanguage.selectedLanguage.value;
+    String spokenText = text;
+    
+    // Translate text before sending to TTS
+    if (lang != 'English') {
+      try {
+        spokenText = await BhashiniTranslateService.translateUiText(text, targetLanguage: lang);
+      } catch (_) {}
+    }
+
     if (AppConfig.hasBhashiniKey) {
       final ok = await BhashiniTtsService.synthesizeAndPlay(
-        text: text,
-        language: language ?? 'English',
+        text: spokenText,
+        language: lang,
         speechRate: 0.9,
       );
       if (ok) return true;
       lastError = 'Voice failed. Check internet or Bhashini API key.';
     }
-    if (language != null && language != 'English') {
-      await _tts.setLanguage(_flutterTtsLangCode(language));
+    if (lang != 'English') {
+      await _tts.setLanguage(_flutterTtsLangCode(lang));
     } else {
       await _tts.setLanguage("en-IN");
     }
-    final result = await _tts.speak(text);
-    // flutter_tts returns 1 (Android) / "success" (iOS) depending on platform.
+    final result = await _tts.speak(spokenText);
     if (result == 1 || result == "1" || result == "success") return true;
     lastError ??= 'Device text-to-speech not available on this device.';
     return false;

@@ -101,9 +101,10 @@ class _LoginMobileScreenState extends State<LoginMobileScreen> {
                     ),
                     child: Column(
                       children: [
-                        const Text(
-                          "📱",
-                          style: TextStyle(fontSize: 52),
+                        const Icon(
+                          Icons.phone_android,
+                          size: 52,
+                          color: Color(0xFFE07B39),
                         ),
                         const SizedBox(height: 10),
                         const TranslatedText(
@@ -142,7 +143,7 @@ class _LoginMobileScreenState extends State<LoginMobileScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 14),
                           child: Row(
                             children: const [
-                              Text("🇮🇳", style: TextStyle(fontSize: 16)),
+                              Icon(Icons.flag, size: 16, color: Color(0xFF0D2240)),
                               SizedBox(width: 6),
                               Text(
                                 "+91",
@@ -171,7 +172,7 @@ class _LoginMobileScreenState extends State<LoginMobileScreen> {
                   ),
                   const SizedBox(height: 6),
                   const TranslatedText(
-                    "📩 A 6-digit OTP will be sent to this number",
+                    "A 6-digit OTP will be sent to this number",
                     style: TextStyle(fontSize: 11, color: Color(0xFF9BA8BB)),
                   ),
 
@@ -186,7 +187,7 @@ class _LoginMobileScreenState extends State<LoginMobileScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     ),
                     child: const TranslatedText(
-                      "Get OTP on Mobile 📩",
+                      "Get OTP on Mobile",
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white),
                     ),
                   ),
@@ -204,7 +205,7 @@ class _LoginMobileScreenState extends State<LoginMobileScreen> {
                       ),
                       child: Row(
                         children: [
-                          const Text("➕", style: TextStyle(fontSize: 22)),
+                          const Icon(Icons.add, size: 22, color: Colors.white),
                           const SizedBox(width: 10),
                           const Expanded(
                             child: Column(
