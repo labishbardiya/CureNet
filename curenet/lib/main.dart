@@ -23,6 +23,12 @@ import 'screens/create_abha_mobile_screen.dart';
 import 'screens/privacy_notice_screen.dart';
 import 'screens/register_mobile_details_screen.dart';
 import 'screens/mobile_otp_verify_screen.dart';
+import 'screens/forgot_abha_screen.dart';
+import 'screens/create_abha_aadhaar_screen.dart';
+import 'screens/login_aadhaar_screen.dart';
+import 'screens/login_abha_num_screen.dart';
+import 'screens/login_abha_addr_screen.dart';
+
 void main() {
   runApp(const CureNetApp());
 }
@@ -43,6 +49,7 @@ class CureNetApp extends StatelessWidget {
         '/language-select': (context) => const LanguageSelectScreen(),
         '/login-options': (context) => const LoginOptionsScreen(),
         '/login-mobile': (context) => const LoginMobileScreen(),
+        '/create-abha-aadhaar': (context) => const CreateAbhaAadhaarScreen(),
         '/login-otp': (context) => const LoginOtpScreen(),
         '/home': (context) => const HomeScreen(),
         '/profile': (context) => const ProfileScreen(),
@@ -61,6 +68,10 @@ class CureNetApp extends StatelessWidget {
         '/register-mobile-details': (context) => const RegisterMobileDetailsScreen(),
         '/privacy-notice': (context) => const PrivacyNoticeScreen(),
         '/register-abha': (context) => const RegisterAbhaScreen(),
+        '/forgot-abha': (context) => const ForgotAbhaScreen(),
+        '/login-aadhaar': (context) => const LoginAadhaarScreen(),
+        '/login-abha-num': (context) => const LoginAbhaNumScreen(),
+        '/login-abha-addr': (context) => const LoginAbhaAddrScreen(),
       },
     );
   }

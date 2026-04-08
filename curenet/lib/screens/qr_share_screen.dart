@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../core/theme.dart';
 import '../core/voice_helper.dart';
+import '../core/translated_text.dart';
 
 class QrShareScreen extends StatelessWidget {
   const QrShareScreen({super.key});
@@ -29,8 +30,7 @@ class QrShareScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 const Expanded(
-                  child: Text(
-                    "Share with Doctor",
+                  child: TranslatedText("Share with Doctor",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Color(0xFF0D2240)),
                   ),
                 ),
@@ -82,8 +82,7 @@ class QrShareScreen extends StatelessWidget {
                           foregroundColor: const Color(0xFF0D2240),
                         ),
                         const SizedBox(height: 20),
-                        const Text(
-                          "91-2345-6789-0123",
+                        const TranslatedText("91-2345-6789-0123",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w900,
@@ -91,8 +90,7 @@ class QrShareScreen extends StatelessWidget {
                             color: Color(0xFF0D2240),
                           ),
                         ),
-                        const Text(
-                          "@abdm",
+                        const TranslatedText("@abdm",
                           style: TextStyle(fontSize: 13, color: Color(0xFF9BA8BB)),
                         ),
                       ],
@@ -110,12 +108,11 @@ class QrShareScreen extends StatelessWidget {
                     ),
                     child: const Column(
                       children: [
-                        Text(
-                          "How to use",
+                        TranslatedText("How to use",
                           style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF00A3A3)),
                         ),
-                        SizedBox(height: 8),
-                        Text(
+                        const SizedBox(height: 8),
+                        const TranslatedText(
                           "1. Show this QR to any doctor\n"
                           "2. They will scan & request access\n"
                           "3. You approve in 1 tap\n"
@@ -135,8 +132,7 @@ class QrShareScreen extends StatelessWidget {
                       minimumSize: const Size(double.infinity, 58),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     ),
-                    child: const Text(
-                      "Show QR to Doctor",
+                    child: const TranslatedText("Show QR to Doctor",
                       style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
                     ),
                   ),

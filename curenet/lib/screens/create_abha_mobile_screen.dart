@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
+import '../core/translated_text.dart';
 
 class CreateAbhaMobileScreen extends StatefulWidget {
   const CreateAbhaMobileScreen({super.key});
@@ -32,8 +33,7 @@ class _CreateAbhaMobileScreenState extends State<CreateAbhaMobileScreen> {
                     child: const Text('←', style: TextStyle(fontSize: 26, color: Color(0xFF0D2240))),
                   ),
                   const Spacer(),
-                  const Text(
-                    'Create ABHA',
+                  const TranslatedText('Create ABHA',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF0D2240)),
                   ),
                   const Spacer(),
@@ -46,13 +46,11 @@ class _CreateAbhaMobileScreenState extends State<CreateAbhaMobileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Mobile Number',
+                    const TranslatedText('Mobile Number',
                       style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
                     ),
                     const SizedBox(height: 12),
-                    const Text(
-                      'Enter your mobile number to create ABHA',
+                    const TranslatedText('Enter your mobile number to create ABHA',
                       style: TextStyle(fontSize: 15, color: Color(0xFF9BA8BB)),
                     ),
                     const SizedBox(height: 24),
@@ -143,8 +141,7 @@ class _CreateAbhaMobileScreenState extends State<CreateAbhaMobileScreen> {
                   minimumSize: const Size(double.infinity, 54),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
-                child: Text(
-                  'Continue',
+                child: TranslatedText('Continue',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,

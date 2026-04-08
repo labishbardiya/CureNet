@@ -18,13 +18,13 @@ class _ChatScreenState extends State<ChatScreen> {
   final List<Map<String, dynamic>> _messages = [
     {
       "role": "bot",
-      "text": "Namaste Priya! I'm Abhya, your personal health assistant. How can I help you today? 😊"
+      "text": "Namaste Priya! I'm Abhya, your personal health assistant. How can I help you today?"
     },
   ];
 
   final Map<String, String> _sampleResponses = {
-    "What medications am I on?": "You're currently on **Amlodipine 5mg** once daily for hypertension. Last prescribed by Dr. Meena Kapoor on 22 Feb 2026. Take it every morning with water. 💊",
-    "Is my BP under control?": "Your last BP reading was **142/90 mmHg** (Stage 1). It's improving with medication. Keep monitoring and follow up with Dr. Kapoor in 4 weeks. 📊",
+    "What medications am I on?": "You're currently on **Amlodipine 5mg** once daily for hypertension. Last prescribed by Dr. Meena Kapoor on 22 Feb 2026. Take it every morning with water.",
+    "Is my BP under control?": "Your last BP reading was **142/90 mmHg** (Stage 1). It's improving with medication. Keep monitoring and follow up with Dr. Kapoor in 4 weeks.",
     "When is my next appointment?": "Your cardiology follow-up with Dr. Meena Kapoor is due by **22 March 2026**. Would you like me to show the details?",
   };
 
@@ -40,7 +40,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     Future.delayed(const Duration(milliseconds: 600), () {
       final reply = _sampleResponses[text] ??
-          "Based on your records, that's a great question! Let me check... For anything specific, I recommend discussing with your doctor. How else can I help? 🩺";
+          "Based on your records, that's a great question! Let me check... For anything specific, I recommend discussing with your doctor. How else can I help?";
       setState(() {
         _messages.add({"role": "bot", "text": reply});
       });
@@ -119,7 +119,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ],
             ),
-            child: Text(
+            child: TranslatedText(
               text,
               style: TextStyle(
                 fontSize: 15,
@@ -171,7 +171,7 @@ Widget build(BuildContext context) {
               const CircleAvatar(
                 radius: 17,
                 backgroundColor: Color(0xFFE07B39),
-                child: Text("🤖", style: TextStyle(fontSize: 18)),
+                child: Icon(Icons.smart_toy, size: 18, color: Colors.white),
               ),
               const SizedBox(width: 10),
               const Column(
@@ -230,7 +230,7 @@ Widget build(BuildContext context) {
                           bottomRight: Radius.circular(isUser ? 4 : 18),
                         ),
                       ),
-                      child: Text(
+                      child: TranslatedText(
                         msg["text"],
                         style: TextStyle(
                           fontSize: 15,
@@ -337,7 +337,7 @@ Widget build(BuildContext context) {
           color: const Color(0xFFE8F7F7),
           borderRadius: BorderRadius.circular(30),
         ),
-        child: Text(
+        child: TranslatedText(
           text,
           style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF0D2240)),
         ),

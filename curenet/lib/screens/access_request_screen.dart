@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
 import 'package:curenet/core/navigation_helper.dart';
+import '../core/translated_text.dart';
 
 class AccessRequestScreen extends StatelessWidget {
   const AccessRequestScreen({super.key});
@@ -30,12 +31,10 @@ class AccessRequestScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Access Request 🔔",
+                      TranslatedText("Access Request",
                         style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white),
                       ),
-                      Text(
-                        "A doctor wants to view your records",
+                      TranslatedText("A doctor wants to view your records",
                         style: TextStyle(fontSize: 14, color: Colors.white70),
                       ),
                     ],
@@ -67,24 +66,21 @@ class AccessRequestScreen extends StatelessWidget {
                             color: const Color(0xFF1A3A8A).withOpacity(0.08),
                             borderRadius: BorderRadius.circular(18),
                           ),
-                          child: const Center(child: Text("👨‍⚕️", style: TextStyle(fontSize: 28))),
+                          child: const Center(child: Icon(Icons.person, size: 28, color: Color(0xFF1A3A8A))),
                         ),
                         const SizedBox(width: 14),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: const [
-                              Text(
-                                "Dr. Suresh Kumar",
+                              TranslatedText("Dr. Suresh Kumar",
                                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
                               ),
-                              Text(
-                                "MBBS, MD · Apollo Spectra",
+                              TranslatedText("MBBS, MD · Apollo Spectra",
                                 style: TextStyle(fontSize: 13, color: Color(0xFF9BA8BB)),
                               ),
                               SizedBox(height: 6),
-                              Text(
-                                "✓ Verified NMC Doctor",
+                              TranslatedText("✓ Verified NMC Doctor",
                                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF22A36A)),
                               ),
                             ],
@@ -106,8 +102,7 @@ class AccessRequestScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "✅ THEY WILL SEE",
+                        const TranslatedText("THEY WILL SEE",
                           style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF00A3A3), letterSpacing: 0.4),
                         ),
                         const SizedBox(height: 10),
@@ -131,8 +126,7 @@ class AccessRequestScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "🚫 THEY WILL NOT SEE",
+                        const TranslatedText("THEY WILL NOT SEE",
                           style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFFD63B3B), letterSpacing: 0.4),
                         ),
                         const SizedBox(height: 10),
@@ -144,8 +138,7 @@ class AccessRequestScreen extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 16),
-                  const Text(
-                    "Access expires in 30 minutes after approval",
+                  const TranslatedText("Access expires in 30 minutes after approval",
                     style: TextStyle(fontSize: 12, color: Color(0xFF9BA8BB)),
                     textAlign: TextAlign.center,
                   ),
@@ -160,8 +153,7 @@ class AccessRequestScreen extends StatelessWidget {
                       minimumSize: const Size(double.infinity, 56),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     ),
-                    child: const Text(
-                      "✓ Approve Access",
+                    child: const TranslatedText("✓ Approve Access",
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                     ),
                   ),
@@ -176,8 +168,7 @@ class AccessRequestScreen extends StatelessWidget {
                       minimumSize: const Size(double.infinity, 56),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     ),
-                    child: const Text(
-                      "✗ Deny Access",
+                    child: const TranslatedText("✗ Deny Access",
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                     ),
                   ),
@@ -198,11 +189,11 @@ class AccessRequestScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _navItem("🏠", "Home", false, () => Navigator.pushReplacementNamed(context, '/home')),
-            _navItem("🤖", "ABHAy", false, () => Navigator.pushReplacementNamed(context, '/chat')),
+            _navItem(Icons.home, "Home", false, () => Navigator.pushReplacementNamed(context, '/home')),
+            _navItem(Icons.smart_toy, "ABHAy", false, () => Navigator.pushReplacementNamed(context, '/chat')),
             _scanButton(context),
-            _navItem("📋", "Records", false, () => Navigator.pushReplacementNamed(context, '/records')),
-            _navItem("📲", "Share", false, () => Navigator.pushReplacementNamed(context, '/qr-share')),
+            _navItem(Icons.list_alt, "Records", false, () => Navigator.pushReplacementNamed(context, '/records')),
+            _navItem(Icons.share, "Share", false, () => Navigator.pushReplacementNamed(context, '/qr-share')),
           ],
         ),
       ),
@@ -224,7 +215,7 @@ class AccessRequestScreen extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(
+            child: TranslatedText(
               text,
               style: const TextStyle(fontSize: 13, color: Color(0xFF0D2240)),
             ),
@@ -234,14 +225,14 @@ class AccessRequestScreen extends StatelessWidget {
     );
   }
 
-  Widget _navItem(String icon, String label, bool active, VoidCallback? onTap) {
+  Widget _navItem(IconData icon, String label, bool active, VoidCallback? onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(icon, style: TextStyle(fontSize: 22, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
-          Text(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
+          Icon(icon, size: 22, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB)),
+          TranslatedText(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
         ],
       ),
     );
@@ -264,8 +255,9 @@ class AccessRequestScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("📷", style: TextStyle(fontSize: 20, color: Colors.white)),
-                  Text("SCAN", style: TextStyle(fontSize: 7, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
+                  Icon(Icons.camera_alt, size: 20, color: Colors.white),
+                  SizedBox(height: 2),
+                  TranslatedText("SCAN", style: TextStyle(fontSize: 7, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
                 ],
               ),
             ),

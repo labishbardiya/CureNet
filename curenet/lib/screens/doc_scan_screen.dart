@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
 import 'package:curenet/core/navigation_helper.dart';
+import '../core/translated_text.dart';
 
 class DocScanScreen extends StatefulWidget {
   const DocScanScreen({super.key});
@@ -54,12 +55,10 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
                 const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Scan & Upload",
+                    TranslatedText("Scan & Upload",
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Colors.white),
                     ),
-                    Text(
-                      "Scan prescriptions, reports & documents",
+                    TranslatedText("Scan prescriptions, reports & documents",
                       style: TextStyle(fontSize: 12, color: Color(0xFF00C4C4)),
                     ),
                   ],
@@ -115,10 +114,9 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
                         const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("📷", style: TextStyle(fontSize: 48, color: Colors.white54)),
+                            Icon(Icons.camera_enhance, size: 48, color: Colors.white54),
                             SizedBox(height: 8),
-                            Text(
-                              "Camera Active",
+                            TranslatedText("Camera Active",
                               style: TextStyle(fontSize: 13, color: Color(0xFF9BA8BB)),
                             ),
                           ],
@@ -139,13 +137,11 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
                     ),
                     child: const Column(
                       children: [
-                        Text(
-                          "📄 Point camera at document",
+                        TranslatedText("Point camera at document",
                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF00A3A3)),
                         ),
                         SizedBox(height: 8),
-                        Text(
-                          "Align your prescription, lab report, or QR code within the frame. The document will be saved to your Health Locker automatically.",
+                        TranslatedText("Align your prescription, lab report, or QR code within the frame. The document will be saved to your Health Locker automatically.",
                           style: TextStyle(fontSize: 13, color: Color(0xFF5A6880), height: 1.5),
                           textAlign: TextAlign.center,
                         ),
@@ -158,16 +154,15 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
                   // What you can scan
                   const Align(
                     alignment: Alignment.centerLeft,
-                    child: Text(
-                      "WHAT YOU CAN SCAN",
+                    child: TranslatedText("WHAT YOU CAN SCAN",
                       style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF9BA8BB), letterSpacing: 0.4),
                     ),
                   ),
                   const SizedBox(height: 10),
-                  _scanItem("💊", "Prescriptions & Medicines"),
-                  _scanItem("🧪", "Lab Reports & Blood Tests"),
-                  _scanItem("🩻", "X-Ray & Radiology Reports"),
-                  _scanItem("📲", "Doctor's ABHA QR Code"),
+                  _scanItem(Icons.medication, "Prescriptions & Medicines"),
+                  _scanItem(Icons.science, "Lab Reports & Blood Tests"),
+                  _scanItem(Icons.medical_services, "X-Ray & Radiology Reports"),
+                  _scanItem(Icons.qr_code_scanner, "Doctor's ABHA QR Code"),
 
                   const SizedBox(height: 32),
 
@@ -176,7 +171,7 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text("✅ Document scanned & saved to Health Locker!"),
+                          content: TranslatedText("✅ Document scanned & saved to Health Locker!"),
                           backgroundColor: Color(0xFF00A3A3),
                         ),
                       );
@@ -189,8 +184,7 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
                       minimumSize: const Size(double.infinity, 54),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     ),
-                    child: const Text(
-                      "📷 Scan Document (Simulate)",
+                    child: const TranslatedText("Scan Document (Simulate)",
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                     ),
                   ),
@@ -211,18 +205,18 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _navItem("🏠", "Home", false, () => Navigator.pushReplacementNamed(context, '/home')),
-            _navItem("🤖", "ABHAy", false, () => Navigator.pushReplacementNamed(context, '/chat')),
+            _navItem(Icons.home, "Home", false, () => Navigator.pushReplacementNamed(context, '/home')),
+            _navItem(Icons.smart_toy, "ABHAy", false, () => Navigator.pushReplacementNamed(context, '/chat')),
             _scanButton(context),
-            _navItem("📋", "Records", false, () => Navigator.pushReplacementNamed(context, '/records')),
-            _navItem("📲", "Share", false, () => Navigator.pushReplacementNamed(context, '/qr-share')),
+            _navItem(Icons.list_alt, "Records", false, () => Navigator.pushReplacementNamed(context, '/records')),
+            _navItem(Icons.share, "Share", false, () => Navigator.pushReplacementNamed(context, '/qr-share')),
           ],
         ),
       ),
     );
   }
 
-  Widget _scanItem(String emoji, String title) {
+  Widget _scanItem(IconData icon, String title) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
@@ -233,9 +227,9 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
       ),
       child: Row(
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 22)),
+          Icon(icon, size: 22, color: const Color(0xFF0D2240)),
           const SizedBox(width: 12),
-          Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+          TranslatedText(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
         ],
       ),
     );
@@ -248,14 +242,14 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
     );
   }
 
-  Widget _navItem(String icon, String label, bool active, VoidCallback? onTap) {
+  Widget _navItem(IconData icon, String label, bool active, VoidCallback? onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(icon, style: TextStyle(fontSize: 22, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
-          Text(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
+          Icon(icon, size: 22, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB)),
+          TranslatedText(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
         ],
       ),
     );
@@ -278,8 +272,9 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("📷", style: TextStyle(fontSize: 20, color: Colors.white)),
-                  Text("SCAN", style: TextStyle(fontSize: 7, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
+                  Icon(Icons.camera_alt, size: 20, color: Colors.white),
+                  SizedBox(height: 2),
+                  TranslatedText("SCAN", style: TextStyle(fontSize: 7, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
                 ],
               ),
             ),

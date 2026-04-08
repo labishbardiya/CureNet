@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
+import '../core/translated_text.dart';
 
 class RegisterAbhaScreen extends StatelessWidget {
   const RegisterAbhaScreen({super.key});
@@ -26,8 +27,7 @@ class RegisterAbhaScreen extends StatelessWidget {
                     child: const Text('←', style: TextStyle(fontSize: 26, color: Color(0xFF0D2240))),
                   ),
                   const Spacer(),
-                  const Text(
-                    'Your ABHA Created',
+                  const TranslatedText('Your ABHA Created',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF0D2240)),
                   ),
                   const Spacer(),
@@ -52,13 +52,11 @@ class RegisterAbhaScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 32),
-                    const Text(
-                      'Congratulations!',
+                    const TranslatedText('Congratulations!',
                       style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Color(0xFF0D2240)),
                     ),
                     const SizedBox(height: 12),
-                    const Text(
-                      'Your ABHA is now ready. Use it to securely manage and share your health records.',
+                    const TranslatedText('Your ABHA is now ready. Use it to securely manage and share your health records.',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 16, color: Color(0xFF5A6880)),
                     ),
@@ -78,8 +76,7 @@ class RegisterAbhaScreen extends StatelessWidget {
                             children: [
                               Icon(Icons.account_circle, size: 20, color: Color(0xFF00A3A3)),
                               SizedBox(width: 8),
-                              Text(
-                                'Your ABHA Address',
+                              TranslatedText('Your ABHA Address',
                                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
                               ),
                             ],
@@ -99,10 +96,10 @@ class RegisterAbhaScreen extends StatelessWidget {
                             onPressed: () {
                               // Copy logic (add clipboard package)
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('ABHA address copied!')),
+                                const SnackBar(content: TranslatedText('ABHA address copied!')),
                               );
                             },
-                            child: const Text('Copy Address', style: TextStyle(color: Color(0xFF00A3A3))),
+                            child: const TranslatedText('Copy Address', style: TextStyle(color: Color(0xFF00A3A3))),
                           ),
                         ],
                       ),
@@ -120,8 +117,7 @@ class RegisterAbhaScreen extends StatelessWidget {
                   minimumSize: const Size(double.infinity, 54),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
-                child: const Text(
-                  'Get Started',
+                child: const TranslatedText('Get Started',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white),
                 ),
               ),

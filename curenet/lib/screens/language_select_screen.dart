@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/app_language.dart';
+import '../core/translated_text.dart';
 
 class LanguageSelectScreen extends StatefulWidget {
   const LanguageSelectScreen({super.key});
@@ -63,8 +64,7 @@ class _LanguageSelectScreenState extends State<LanguageSelectScreen> {
                   ),
                 ),
                 const SizedBox(width: 14),
-                const Text(
-                  'Select Language',
+                const TranslatedText('Select Language',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
@@ -164,8 +164,7 @@ class _LanguageSelectScreenState extends State<LanguageSelectScreen> {
                 minimumSize: const Size(double.infinity, 54),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
-              child: const Text(
-                'Continue',
+              child: const TranslatedText('Continue',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,

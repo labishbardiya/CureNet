@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
 import 'package:curenet/core/navigation_helper.dart';
+import '../core/translated_text.dart';
 
 class HealthLockerScreen extends StatelessWidget {
   const HealthLockerScreen({super.key});
@@ -30,12 +31,10 @@ class HealthLockerScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Health Locker 🛡️",
+                      TranslatedText("Health Locker",
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Colors.white),
                       ),
-                      Text(
-                        "Your secure, encrypted vault",
+                      TranslatedText("Your secure, encrypted vault",
                         style: TextStyle(fontSize: 12, color: Colors.white70),
                       ),
                     ],
@@ -66,8 +65,7 @@ class HealthLockerScreen extends StatelessWidget {
                         Icon(Icons.lock_outline, color: Color(0xFF00A3A3), size: 20),
                         SizedBox(width: 10),
                         Expanded(
-                          child: Text(
-                            "Your data is encrypted with Zero-Knowledge proofs. No one can access without your consent. DPDP Act 2023 compliant.",
+                          child: TranslatedText("Your data is encrypted with Zero-Knowledge proofs. No one can access without your consent. DPDP Act 2023 compliant.",
                             style: TextStyle(fontSize: 13, color: Color(0xFF00A3A3)),
                           ),
                         ),
@@ -76,8 +74,7 @@ class HealthLockerScreen extends StatelessWidget {
                   ),
 
                   // Records in Locker
-                  const Text(
-                    "RECORDS IN LOCKER",
+                  const TranslatedText("RECORDS IN LOCKER",
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
@@ -89,28 +86,28 @@ class HealthLockerScreen extends StatelessWidget {
 
                   // Encrypted Record Cards
                   _lockerCard(
-                    icon: "🧪",
+                    icon: Icons.science,
                     title: "Blood Test Report",
                     date: "22 Feb 2026",
                     status: "Encrypted",
                     onTap: () {},
                   ),
                   _lockerCard(
-                    icon: "💊",
+                    icon: Icons.medication,
                     title: "Prescription - Hypertension",
                     date: "18 Feb 2026",
                     status: "Encrypted",
                     onTap: () {},
                   ),
                   _lockerCard(
-                    icon: "🩻",
+                    icon: Icons.medical_services,
                     title: "Chest X-Ray",
                     date: "05 Feb 2026",
                     status: "Encrypted",
                     onTap: () {},
                   ),
                   _lockerCard(
-                    icon: "❤️",
+                    icon: Icons.favorite,
                     title: "ECG Report",
                     date: "15 Jan 2026",
                     status: "Encrypted",
@@ -121,7 +118,7 @@ class HealthLockerScreen extends StatelessWidget {
 
                   // Backup & Export
                   _buildActionCard(
-                    icon: "💾",
+                    icon: Icons.save,
                     title: "Backup All Records",
                     subtitle: "Download encrypted backup to your device",
                     color: const Color(0xFF00A3A3),
@@ -129,7 +126,7 @@ class HealthLockerScreen extends StatelessWidget {
                   ),
 
                   _buildActionCard(
-                    icon: "📤",
+                    icon: Icons.upload,
                     title: "Export to ABDM",
                     subtitle: "Share with other ABDM apps (HIP push)",
                     color: const Color(0xFF22A36A),
@@ -154,11 +151,11 @@ class HealthLockerScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _navItem("🏠", "Home", false, () => Navigator.pushReplacementNamed(context, '/home')),
-            _navItem("🤖", "ABHAy", false, () => Navigator.pushReplacementNamed(context, '/chat')),
+            _navItem(Icons.home, "Home", false, () => Navigator.pushReplacementNamed(context, '/home')),
+            _navItem(Icons.smart_toy, "ABHAy", false, () => Navigator.pushReplacementNamed(context, '/chat')),
             _scanButton(context),
-            _navItem("📋", "Records", false, () => Navigator.pushReplacementNamed(context, '/records')),
-            _navItem("📲", "Share", false, () => Navigator.pushReplacementNamed(context, '/qr-share')),
+            _navItem(Icons.list_alt, "Records", false, () => Navigator.pushReplacementNamed(context, '/records')),
+            _navItem(Icons.share, "Share", false, () => Navigator.pushReplacementNamed(context, '/qr-share')),
           ],
         ),
       ),
@@ -166,7 +163,7 @@ class HealthLockerScreen extends StatelessWidget {
   }
 
   Widget _lockerCard({
-    required String icon,
+    required IconData icon,
     required String title,
     required String date,
     required String status,
@@ -192,14 +189,14 @@ class HealthLockerScreen extends StatelessWidget {
                 color: const Color(0xFFE8F7F7),
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: Center(child: Text(icon, style: const TextStyle(fontSize: 24))),
+              child: Center(child: Icon(icon, size: 24, color: const Color(0xFF00A3A3))),
             ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
+                  TranslatedText(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
                   Text(date, style: const TextStyle(fontSize: 12, color: Color(0xFF9BA8BB))),
                 ],
               ),
@@ -213,8 +210,7 @@ class HealthLockerScreen extends StatelessWidget {
                     color: const Color(0xFFE6F7EF),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Text(
-                    "Locked",
+                  child: const TranslatedText("Locked",
                     style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF22A36A)),
                   ),
                 ),
@@ -229,7 +225,7 @@ class HealthLockerScreen extends StatelessWidget {
   }
 
   Widget _buildActionCard({
-    required String icon,
+    required IconData icon,
     required String title,
     required String subtitle,
     required Color color,
@@ -254,15 +250,15 @@ class HealthLockerScreen extends StatelessWidget {
                 color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Center(child: Text(icon, style: TextStyle(fontSize: 24, color: color))),
+              child: Center(child: Icon(icon, size: 24, color: color)),
             ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: color)),
-                  Text(subtitle, style: const TextStyle(fontSize: 13, color: Color(0xFF5A6880))),
+                  TranslatedText(title, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: color)),
+                  TranslatedText(subtitle, style: const TextStyle(fontSize: 13, color: Color(0xFF5A6880))),
                 ],
               ),
             ),
@@ -278,22 +274,22 @@ class HealthLockerScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text("Backup Records"),
-        content: const Text("Encrypted backup will be downloaded to your device. Available offline forever."),
+        title: const TranslatedText("Backup Records"),
+        content: const TranslatedText("Encrypted backup will be downloaded to your device. Available offline forever."),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
+            child: const TranslatedText("Cancel"),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("✅ Backup downloaded to Downloads"), backgroundColor: Color(0xFF00A3A3)),
+                const SnackBar(content: TranslatedText("✅ Backup downloaded to Downloads"), backgroundColor: Color(0xFF00A3A3)),
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00A3A3)),
-            child: const Text("Download"),
+            child: const TranslatedText("Download"),
           ),
         ],
       ),
@@ -305,36 +301,36 @@ class HealthLockerScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text("Export to ABDM"),
-        content: const Text("Your records will be pushed to the national ABDM network for secure sharing with other apps."),
+        title: const TranslatedText("Export to ABDM"),
+        content: const TranslatedText("Your records will be pushed to the national ABDM network for secure sharing with other apps."),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
+            child: const TranslatedText("Cancel"),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("✅ Records exported to ABDM"), backgroundColor: Color(0xFF22A36A)),
+                const SnackBar(content: TranslatedText("✅ Records exported to ABDM"), backgroundColor: Color(0xFF22A36A)),
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF22A36A)),
-            child: const Text("Export"),
+            child: const TranslatedText("Export"),
           ),
         ],
       ),
     );
   }
 
-  Widget _navItem(String icon, String label, bool active, VoidCallback? onTap) {
+  Widget _navItem(IconData icon, String label, bool active, VoidCallback? onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(icon, style: TextStyle(fontSize: 22, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
-          Text(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
+          Icon(icon, size: 22, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB)),
+          TranslatedText(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
         ],
       ),
     );
@@ -357,8 +353,9 @@ class HealthLockerScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("📷", style: TextStyle(fontSize: 20, color: Colors.white)),
-                  Text("SCAN", style: TextStyle(fontSize: 7, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
+                  Icon(Icons.camera_alt, size: 20, color: Colors.white),
+                  SizedBox(height: 2),
+                  TranslatedText("SCAN", style: TextStyle(fontSize: 7, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
                 ],
               ),
             ),

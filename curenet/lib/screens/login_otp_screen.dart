@@ -78,6 +78,10 @@ class _LoginOtpScreenState extends State<LoginOtpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final String authMethod = args?['authMethod'] as String? ?? 'Mobile OTP';
+    final String loginId = args?['loginId'] as String? ?? '+91 98765 43210';
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -92,9 +96,9 @@ class _LoginOtpScreenState extends State<LoginOtpScreen> {
                   child: const Text("←", style: TextStyle(fontSize: 26, color: Color(0xFF0D2240))),
                 ),
                 const SizedBox(width: 14),
-                const TranslatedText(
+                TranslatedText(
                   "Enter OTP",
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900, color: Color(0xFF0D2240)),
+                  style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w900, color: Color(0xFF0D2240)),
                 ),
               ],
             ),
@@ -116,19 +120,19 @@ class _LoginOtpScreenState extends State<LoginOtpScreen> {
                       shape: BoxShape.circle,
                     ),
                     child: const Center(
-                      child: Text("📨", style: TextStyle(fontSize: 48)),
+                      child: Icon(Icons.mail, size: 48, color: Color(0xFF00A3A3)),
                     ),
                   ),
 
                   const SizedBox(height: 24),
-                  const TranslatedText(
-                    "6-digit OTP sent to",
-                    style: TextStyle(fontSize: 13, color: Color(0xFF5A6880)),
+                  TranslatedText(
+                    "6-digit $authMethod sent to",
+                    style: const TextStyle(fontSize: 13, color: Color(0xFF5A6880)),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
-                    "+91 98765 43210",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
+                  Text(
+                    loginId,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
                   ),
 
                   const SizedBox(height: 32),
@@ -184,7 +188,7 @@ class _LoginOtpScreenState extends State<LoginOtpScreen> {
                           onTap: () {
                             _startTimer();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("OTP resent ✓"), backgroundColor: Color(0xFF00A3A3)),
+                              const SnackBar(content: Text("OTP resent"), backgroundColor: Color(0xFF00A3A3)),
                             );
                           },
                           child: const TranslatedText(
@@ -200,7 +204,7 @@ class _LoginOtpScreenState extends State<LoginOtpScreen> {
                   // Error message
                   if (_showError)
                     const TranslatedText(
-                      "❌ Incorrect OTP. Please try again.",
+                      "Incorrect OTP. Please try again.",
                       style: TextStyle(color: Colors.red, fontSize: 13, fontWeight: FontWeight.w600),
                     ),
 

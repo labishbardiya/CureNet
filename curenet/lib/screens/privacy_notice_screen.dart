@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
+import '../core/translated_text.dart';
 
 class PrivacyNoticeScreen extends StatefulWidget {
   const PrivacyNoticeScreen({super.key});
@@ -31,8 +32,7 @@ class _PrivacyNoticeScreenState extends State<PrivacyNoticeScreen> {
                     child: const Text('←', style: TextStyle(fontSize: 26, color: Color(0xFF0D2240))),
                   ),
                   const Spacer(),
-                  const Text(
-                    'Privacy Notice',
+                  const TranslatedText('Privacy Notice',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF0D2240)),
                   ),
                   const Spacer(),
@@ -46,13 +46,11 @@ class _PrivacyNoticeScreenState extends State<PrivacyNoticeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Before we create your ABHA',
+                      const TranslatedText('Before we create your ABHA',
                         style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
                       ),
                       const SizedBox(height: 12),
-                      const Text(
-                        'We need your consent to create your ABHA and manage your health records securely.',
+                      const TranslatedText('We need your consent to create your ABHA and manage your health records securely.',
                         style: TextStyle(fontSize: 15, color: Color(0xFF9BA8BB)),
                       ),
                       const SizedBox(height: 24),
@@ -67,19 +65,24 @@ class _PrivacyNoticeScreenState extends State<PrivacyNoticeScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Row(
+                            Row(
                               children: [
-                                Icon(Icons.shield_outlined, size: 20, color: Color(0xFF00A3A3)),
-                                SizedBox(width: 8),
-                                Text(
-                                  'Your Data is Safe',
+                                Image.asset(
+                                  'assets/images/curenet_logo.png',
+                                  width: 52,
+                                  height: 52,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(Icons.shield_outlined, size: 52, color: Color(0xFF00A3A3));
+                                  },
+                                ),
+                                const SizedBox(width: 8),
+                                const TranslatedText('Your Data is Safe',
                                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 16),
-                            const Text(
-                              'We use Zero-Knowledge Proofs to ensure your medical records are never exposed without your explicit consent. Your ABHA is protected under DPDP Act 2023.',
+                            const TranslatedText('We use Zero-Knowledge Proofs to ensure your medical records are never exposed without your explicit consent. Your ABHA is protected under DPDP Act 2023.',
                               style: TextStyle(fontSize: 14, color: Color(0xFF5A6880)),
                             ),
                             const SizedBox(height: 16),
@@ -149,8 +152,7 @@ class _PrivacyNoticeScreenState extends State<PrivacyNoticeScreen> {
                   minimumSize: const Size(double.infinity, 54),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
-                child: const Text(
-                  'Create ABHA',
+                child: const TranslatedText('Create ABHA',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white),
                 ),
               ),

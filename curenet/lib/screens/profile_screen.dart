@@ -125,7 +125,7 @@ class ProfileScreen extends StatelessWidget {
                       _settingRow("Notification Preferences", () {}),
                       _settingRow("Download Health Records", () {}),
                       _settingRow("Privacy Policy & DPDP Act", () => Navigator.pushNamed(context, '/privacy-policy')),
-                      _settingRow("🛠 Edge Cases (Debug)", () => Navigator.pushNamed(context, '/edge'), isRed: false),
+                      _settingRow("Edge Cases (Debug)", () => Navigator.pushNamed(context, '/edge'), isRed: false),
                     ],
                   ),
 
@@ -147,11 +147,11 @@ class ProfileScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _navItem("🏠", "Home", false, () => Navigator.pushReplacementNamed(context, '/home')),
-            _navItem("🤖", "ABHAy", false, () => Navigator.pushReplacementNamed(context, '/chat')),
+            _navItem(Icons.home, "Home", false, () => Navigator.pushReplacementNamed(context, '/home')),
+            _navItem(Icons.smart_toy, "ABHAy", false, () => Navigator.pushReplacementNamed(context, '/chat')),
             _scanButton(context),
-            _navItem("📋", "Records", false, () => Navigator.pushReplacementNamed(context, '/records')),
-            _navItem("📲", "Share", false, () => Navigator.pushReplacementNamed(context, '/qr-share')),
+            _navItem(Icons.list_alt, "Records", false, () => Navigator.pushReplacementNamed(context, '/records')),
+            _navItem(Icons.share, "Share", false, () => Navigator.pushReplacementNamed(context, '/qr-share')),
           ],
         ),
       ),
@@ -169,7 +169,7 @@ class ProfileScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          TranslatedText(
             title,
             style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF9BA8BB), letterSpacing: 0.5),
           ),
@@ -186,8 +186,8 @@ class ProfileScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(fontSize: 14, color: Color(0xFF5A6880))),
-          Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF0D2240))),
+          TranslatedText(label, style: const TextStyle(fontSize: 14, color: Color(0xFF5A6880))),
+          TranslatedText(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF0D2240))),
         ],
       ),
     );
@@ -202,8 +202,8 @@ class ProfileScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(doctor, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
-                Text(subtitle, style: const TextStyle(fontSize: 11, color: Color(0xFF9BA8BB))),
+                TranslatedText(doctor, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
+                TranslatedText(subtitle, style: const TextStyle(fontSize: 11, color: Color(0xFF9BA8BB))),
               ],
             ),
           ),
@@ -213,7 +213,7 @@ class ProfileScreen extends StatelessWidget {
               color: status == "Active" ? const Color(0xFFE6F7EF) : const Color(0xFFF5F7FA),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Text(
+            child: TranslatedText(
               status,
               style: TextStyle(
                 fontSize: 11,
@@ -238,7 +238,7 @@ class ProfileScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            TranslatedText(
               title,
               style: TextStyle(
                 fontSize: 14,
@@ -253,14 +253,14 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _navItem(String icon, String label, bool active, VoidCallback? onTap) {
+  Widget _navItem(IconData icon, String label, bool active, VoidCallback? onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(icon, style: TextStyle(fontSize: 22, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
-          Text(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
+          Icon(icon, size: 22, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB)),
+          TranslatedText(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
         ],
       ),
     );
@@ -283,7 +283,8 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("📷", style: TextStyle(fontSize: 20, color: Colors.white)),
+                  Icon(Icons.camera_alt, size: 20, color: Colors.white),
+                  SizedBox(height: 2),
                   Text("SCAN", style: TextStyle(fontSize: 7, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
                 ],
               ),

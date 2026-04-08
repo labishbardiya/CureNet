@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
+import '../core/translated_text.dart';
 
 class RegisterOptionsScreen extends StatefulWidget {
   const RegisterOptionsScreen({super.key});
@@ -22,7 +23,7 @@ class _RegisterOptionsScreenState extends State<RegisterOptionsScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header – exact screenshot
+            // Header
             Container(
               padding: const EdgeInsets.fromLTRB(18, 44, 18, 14),
               decoration: const BoxDecoration(
@@ -36,8 +37,7 @@ class _RegisterOptionsScreenState extends State<RegisterOptionsScreen> {
                     child: const Text('←', style: TextStyle(fontSize: 26, color: Color(0xFF0D2240))),
                   ),
                   const Spacer(),
-                  const Text(
-                    'Create ABHA',
+                  const TranslatedText('Create ABHA',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF0D2240)),
                   ),
                   const Spacer(),
@@ -51,21 +51,20 @@ class _RegisterOptionsScreenState extends State<RegisterOptionsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Create your ABHA',
+                    const TranslatedText('Create your ABHA',
                       style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      'Your free digital health ID',
+                    const TranslatedText('Your free digital health ID',
                       style: TextStyle(fontSize: 14, color: Color(0xFF9BA8BB)),
                     ),
                     const SizedBox(height: 32),
 
-                    // Aadhaar Card (recommended – teal border)
-                    GestureDetector(
+                    // Aadhaar Option (Recommended)
+                    InkWell(
                       onTap: () => selectMethod('aadhaar'),
-                      child: Container(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
                         width: double.infinity,
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
@@ -94,15 +93,14 @@ class _RegisterOptionsScreenState extends State<RegisterOptionsScreen> {
                                 children: [
                                   Row(
                                     children: [
-                                      const Text(
-                                        'Use Aadhaar Number ',
+                                      const TranslatedText('Use Aadhaar Number',
                                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
                                       ),
-                                      if (selectedMethod == 'aadhaar') const Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF00A3A3)),
+                                      if (selectedMethod == 'aadhaar')
+                                        const Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF00A3A3)),
                                     ],
                                   ),
-                                  const Text(
-                                    'Quick verification with your Aadhaar',
+                                  const TranslatedText('Quick verification with your Aadhaar',
                                     style: TextStyle(fontSize: 14, color: Color(0xFF9BA8BB)),
                                   ),
                                 ],
@@ -112,12 +110,14 @@ class _RegisterOptionsScreenState extends State<RegisterOptionsScreen> {
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 12),
 
-                    // Mobile Card
-                    GestureDetector(
+                    // Mobile Option
+                    InkWell(
                       onTap: () => selectMethod('mobile'),
-                      child: Container(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
                         width: double.infinity,
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
@@ -146,15 +146,14 @@ class _RegisterOptionsScreenState extends State<RegisterOptionsScreen> {
                                 children: [
                                   Row(
                                     children: [
-                                      const Text(
-                                        'Use Mobile Number',
+                                      const TranslatedText('Use Mobile Number',
                                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
                                       ),
-                                      if (selectedMethod == 'mobile') const Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF00A3A3)),
+                                      if (selectedMethod == 'mobile')
+                                        const Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF00A3A3)),
                                     ],
                                   ),
-                                  const Text(
-                                    'Create with your Indian mobile number',
+                                  const TranslatedText('Create with your Indian mobile number',
                                     style: TextStyle(fontSize: 14, color: Color(0xFF9BA8BB)),
                                   ),
                                 ],
@@ -164,12 +163,14 @@ class _RegisterOptionsScreenState extends State<RegisterOptionsScreen> {
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 12),
 
-                    // Already Have ABHA Card (with login button)
-                    GestureDetector(
+                    // Already have ABHA
+                    InkWell(
                       onTap: () => selectMethod('login'),
-                      child: Container(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
                         width: double.infinity,
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
@@ -196,18 +197,21 @@ class _RegisterOptionsScreenState extends State<RegisterOptionsScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    'Already have ABHA?',
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
+                                  Row(
+                                    children: [
+                                      const TranslatedText('Already have ABHA',
+                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
+                                      ),
+                                      if (selectedMethod == 'login')
+                                        const Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF00A3A3)),
+                                    ],
                                   ),
-                                  const Text(
-                                    'Already registered? Login',
+                                  const TranslatedText('Login with your existing ABHA ID',
                                     style: TextStyle(fontSize: 14, color: Color(0xFF9BA8BB)),
                                   ),
                                 ],
                               ),
                             ),
-                            if (selectedMethod == 'login') const Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF00A3A3)),
                           ],
                         ),
                       ),
@@ -216,29 +220,28 @@ class _RegisterOptionsScreenState extends State<RegisterOptionsScreen> {
                 ),
               ),
             ),
+
+            // Continue Button
             Padding(
               padding: const EdgeInsets.all(18),
               child: ElevatedButton(
-                onPressed: selectedMethod.isEmpty ? null : () {
-                  if (selectedMethod == 'mobile') {
-                    Navigator.pushNamed(context, '/create-abha-mobile');
-                  } else if (selectedMethod == 'aadhaar') {
-                    // TODO: Aadhaar flow
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Aadhaar flow coming soon!')),
-                    );
-                  } else if (selectedMethod == 'login') {
-                    // TODO: Login flow
-                    Navigator.pushNamed(context, '/login-options');
-                  }
-                },
+                onPressed: selectedMethod.isEmpty
+                    ? null
+                    : () {
+                        if (selectedMethod == 'aadhaar') {
+                          Navigator.pushNamed(context, '/create-abha-aadhaar');
+                        } else if (selectedMethod == 'mobile') {
+                          Navigator.pushNamed(context, '/create-abha-mobile');
+                        } else if (selectedMethod == 'login') {
+                          Navigator.pushNamed(context, '/login-options');
+                        }
+                      },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: selectedMethod.isEmpty ? const Color(0xFFD8DDE6) : const Color(0xFF00A3A3),
                   minimumSize: const Size(double.infinity, 54),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
-                child: Text(
-                  'Continue',
+                child: TranslatedText('Continue',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,

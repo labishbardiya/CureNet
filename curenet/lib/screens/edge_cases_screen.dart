@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
 import 'package:curenet/core/navigation_helper.dart';
+import '../core/translated_text.dart';
 
 class EdgeCasesScreen extends StatefulWidget {
   const EdgeCasesScreen({super.key});
@@ -35,8 +36,7 @@ class _EdgeCasesScreenState extends State<EdgeCasesScreen> {
                   child: const Text("←", style: TextStyle(fontSize: 26, color: Colors.white)),
                 ),
                 const SizedBox(width: 12),
-                const Text(
-                  "Edge Cases",
+                const TranslatedText("Edge Cases",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Colors.white),
                 ),
               ],
@@ -59,8 +59,7 @@ class _EdgeCasesScreenState extends State<EdgeCasesScreen> {
                   const Icon(Icons.wifi_off, color: Color(0xFFD63B3B), size: 20),
                   const SizedBox(width: 8),
                   const Expanded(
-                    child: Text(
-                      "Offline Mode",
+                    child: TranslatedText("Offline Mode",
                       style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFFD63B3B)),
                     ),
                   ),
@@ -68,10 +67,10 @@ class _EdgeCasesScreenState extends State<EdgeCasesScreen> {
                     onPressed: () {
                       setState(() => _isOffline = false);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("🟢 Connected"), backgroundColor: Color(0xFF22A36A)),
+                        const SnackBar(content: TranslatedText("🟢 Connected"), backgroundColor: Color(0xFF22A36A)),
                       );
                     },
-                    child: const Text("Reconnect", style: TextStyle(color: Color(0xFF22A36A))),
+                    child: const TranslatedText("Reconnect", style: TextStyle(color: Color(0xFF22A36A))),
                   ),
                 ],
               ),
@@ -98,8 +97,7 @@ class _EdgeCasesScreenState extends State<EdgeCasesScreen> {
                           children: [
                             Icon(Icons.folder_open_outlined, size: 48, color: Color(0xFF00A3A3)),
                             SizedBox(height: 12),
-                            Text(
-                              "No Records Yet",
+                            TranslatedText("No Records Yet",
                               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
                             ),
                           ],
@@ -108,13 +106,11 @@ class _EdgeCasesScreenState extends State<EdgeCasesScreen> {
                     ),
 
                     const SizedBox(height: 20),
-                    const Text(
-                      "Your Health Locker is empty",
+                    const TranslatedText("Your Health Locker is empty",
                       style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Color(0xFF0D2240)),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      "Scan your first prescription or report to get started",
+                    const TranslatedText("Scan your first prescription or report to get started",
                       style: TextStyle(fontSize: 13, color: Color(0xFF5A6880)),
                       textAlign: TextAlign.center,
                     ),
@@ -129,12 +125,12 @@ class _EdgeCasesScreenState extends State<EdgeCasesScreen> {
                         minimumSize: const Size(double.infinity, 54),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       ),
-                      child: const Text("📷 Scan Document"),
+                      child: const TranslatedText("Scan Document"),
                     ),
                     const SizedBox(height: 12),
                     TextButton(
                       onPressed: () => Navigator.pushNamed(context, '/qr-share'),
-                      child: const Text("Or share from another app"),
+                      child: const TranslatedText("Or share from another app"),
                     ),
                   ],
                 ),
@@ -162,8 +158,7 @@ class _EdgeCasesScreenState extends State<EdgeCasesScreen> {
                     ),
 
                     const SizedBox(height: 20),
-                    const Text(
-                      "Something went wrong",
+                    const TranslatedText("Something went wrong",
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF0D2240)),
                     ),
                     const SizedBox(height: 8),
@@ -188,7 +183,7 @@ class _EdgeCasesScreenState extends State<EdgeCasesScreen> {
                         minimumSize: const Size(double.infinity, 54),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       ),
-                      child: const Text("Try Again"),
+                      child: const TranslatedText("Try Again"),
                     ),
                   ],
                 ),
@@ -203,7 +198,7 @@ class _EdgeCasesScreenState extends State<EdgeCasesScreen> {
                 ElevatedButton(
                   onPressed: () => setState(() => _isOffline = !_isOffline),
                   style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00A3A3)),
-                  child: const Text("Toggle Offline Mode"),
+                  child: const TranslatedText("Toggle Offline Mode"),
                 ),
                 const SizedBox(height: 8),
                 ElevatedButton(
@@ -212,7 +207,7 @@ class _EdgeCasesScreenState extends State<EdgeCasesScreen> {
                     _errorMessage = _showError ? "Failed to load records. Please check your connection." : '';
                   }),
                   style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD63B3B)),
-                  child: const Text("Show Error State"),
+                  child: const TranslatedText("Show Error State"),
                 ),
               ],
             ),
