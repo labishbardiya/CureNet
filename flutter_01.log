@@ -1,0 +1,98 @@
+Flutter crash report.
+Please report a bug at https://github.com/flutter/flutter/issues.
+
+## command
+
+flutter run
+
+## exception
+
+StateError: Bad state: No element
+
+```
+#0      Stream.first.<anonymous closure> (dart:async/stream.dart:1653:32)
+<asynchronous suspension>
+#1      AnsiTerminal.promptForCharInput (package:flutter_tools/src/base/terminal.dart:390:17)
+<asynchronous suspension>
+#2      TargetDevices._readUserInput (package:flutter_tools/src/runner/target_devices.dart:363:27)
+<asynchronous suspension>
+#3      TargetDevices._chooseOneOfAvailableDevices (package:flutter_tools/src/runner/target_devices.dart:346:30)
+<asynchronous suspension>
+#4      TargetDevices._selectFromMultipleDevices (package:flutter_tools/src/runner/target_devices.dart:316:33)
+<asynchronous suspension>
+#5      RunCommand.validateCommand (package:flutter_tools/src/commands/run.dart:671:15)
+<asynchronous suspension>
+#6      FlutterCommand.verifyThenRunCommand (package:flutter_tools/src/runner/flutter_command.dart:1912:5)
+<asynchronous suspension>
+#7      FlutterCommand.run.<anonymous closure> (package:flutter_tools/src/runner/flutter_command.dart:1590:27)
+<asynchronous suspension>
+#8      AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#9      CommandRunner.runCommand (package:args/command_runner.dart:212:13)
+<asynchronous suspension>
+#10     FlutterCommandRunner.runCommand.<anonymous closure> (package:flutter_tools/src/runner/flutter_command_runner.dart:496:9)
+<asynchronous suspension>
+#11     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#12     FlutterCommandRunner.runCommand (package:flutter_tools/src/runner/flutter_command_runner.dart:431:5)
+<asynchronous suspension>
+#13     FlutterCommandRunner.run.<anonymous closure> (package:flutter_tools/src/runner/flutter_command_runner.dart:307:33)
+<asynchronous suspension>
+#14     run.<anonymous closure>.<anonymous closure> (package:flutter_tools/runner.dart:104:11)
+<asynchronous suspension>
+#15     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#16     main (package:flutter_tools/executable.dart:103:3)
+<asynchronous suspension>
+```
+
+## flutter doctor
+
+```
+[32m[✓][39m Flutter (Channel stable, 3.41.2, on Microsoft Windows [Version 10.0.26200.8117],
+    locale en-IN) [517ms]
+    [32m•[39m Flutter version 3.41.2 on channel stable at C:\Users\SK\flutter
+    [32m•[39m Upstream repository https://github.com/flutter/flutter.git
+    [32m•[39m Framework revision 90673a4eef (8 weeks ago), 2026-02-18 13:54:59 -0800
+    [32m•[39m Engine revision 6c0baaebf7
+    [32m•[39m Dart version 3.11.0
+    [32m•[39m DevTools version 2.54.1
+    [32m•[39m Feature flags: enable-web, enable-linux-desktop, enable-macos-desktop,
+      enable-windows-desktop, enable-android, enable-ios, cli-animations,
+      enable-native-assets, omit-legacy-version-file, enable-lldb-debugging,
+      enable-uiscene-migration
+
+[32m[✓][39m Windows Version (11 Pro 64-bit, 25H2, 2009) [1,994ms]
+
+[32m[✓][39m Android toolchain - develop for Android devices (Android SDK version 36.1.0)
+    [5.4s]
+    [32m•[39m Android SDK at C:\Users\SK\AppData\Local\Android\sdk
+    [32m•[39m Emulator version 36.4.9.0 (build_id 14788078) (CL:N/A)
+    [32m•[39m Platform android-36.1, build-tools 36.1.0
+    [32m•[39m Java binary at: C:\Program Files\Android\Android Studio\jbr\bin\java
+      This is the JDK bundled with the latest Android Studio installation on this
+      machine.
+      To manually set the JDK path, use: `flutter config --jdk-dir="path/to/jdk"`.
+    [32m•[39m Java version OpenJDK Runtime Environment (build 21.0.9+-14649483-b1163.86)
+    [32m•[39m All Android licenses accepted.
+
+[32m[✓][39m Chrome - develop for the web [11ms]
+    [32m•[39m Chrome at C:\Program Files\Google\Chrome\Application\chrome.exe
+
+[31m[✗][39m Visual Studio - develop Windows apps [10ms]
+    [31m✗[39m Visual Studio not installed; this is necessary to develop Windows apps.
+      Download at https://visualstudio.microsoft.com/downloads/.
+      Please install the "Desktop development with C++" workload, including all of
+      its default components
+
+[32m[✓][39m Connected device (3 available) [216ms]
+    [32m•[39m Windows (desktop) • windows • windows-x64    • Microsoft Windows [Version
+      10.0.26200.8117]
+    [32m•[39m Chrome (web)      • chrome  • web-javascript • Google Chrome 146.0.7680.178
+    [32m•[39m Edge (web)        • edge    • web-javascript • Microsoft Edge 146.0.3856.109
+
+[32m[✓][39m Network resources [1,605ms]
+    [32m•[39m All expected network resources are available.
+
+[33m![39m Doctor found issues in 1 category.
+```

@@ -1,42 +1,33 @@
 # CureNet
 
-## Instructions & References
+Senior-friendly, rural-first Flutter app (patient-owned ABHA Personal Health Record). Matches v5 HTML prototype; supports 22 Indian languages via Bhashini TTS.
 
-### Meeting / Review of the project will be done with the supervisor on the following days of the Week:
+## Run with Bhashini TTS (22 Indian languages)
 
-1. Supervisor: Mr. Gaurav Raj
-2. Meeting Days: Monday and Thursday
-3. Meeting Time: 3:00 PM
+Use your **Inference API Key** from [Bhashini Dashboard](https://dashboard.bhashini.co.in) (List of API Keys → Inference API Key Value):
 
-<i>Subject to change as per supervisor’s consent and schedule.</i>
+```bash
+flutter run --dart-define=BHASHINI_API_KEY=your_inference_api_key_here
+```
 
-### Attendance File includes the following attributes:
+Optional: **Udyam Key** for other Bhashini APIs:
 
-- Date
-- Day
-- Attendance
-- Notes
+```bash
+flutter run --dart-define=BHASHINI_API_KEY=... --dart-define=BHASHINI_UDYAM_KEY=...
+```
 
-<b>Attendance File will be accessed and managed by Supervisor only.</b>
+Without these, the app falls back to device TTS (flutter_tts). Speaker icons appear on Chat, Records, Profile, QR Share, and Notifications.
 
-### Progress File includes the following attributes:
+## ABDM integration
 
-1. Milestone
-2. Task
-3. Assigned To
-4. Status
-5. Start date
-6. End date
-7. Notes
+ABDM service layer is in `lib/services/abdm_service.dart`, following the **ABDM ABHA V3 APIs** guide and AyushmanNHA YouTube workflows:
 
-### Figma Design
+- **M1**: Session, get public key, Aadhaar OTP request/verify, ABHA address suggestion/confirm, profile, ABHA card, scan & share (bridge URL).
+- Base URL (sandbox): `https://dev.ndhm.gov.in/devservice/gateway`
 
-- [Access Design Link](https://www.figma.com/design/McAGqBbIS6IET24IpoNC7z/CureNet-Prototype?t=RAh0iDHZpqQ5JNp6-1)
+Use the attached **ABDM_ABHA_V3_AP_Is_V1_31_07_2025** PDF and sandbox Postman collection for exact endpoint paths and request bodies. Register your app on the [ABDM Sandbox](https://sandbox.abdm.gov.in) to get Client ID and Client Secret for `AbdmService.createSession()`.
 
-- Access Password: Curenet@2004
+## Getting Started
 
-### Synopsis
-Provides the brief on CureNet.
-
-### Research
-Research points that validate CureNet.
+- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
+- [Flutter documentation](https://docs.flutter.dev/)

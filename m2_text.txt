@@ -1,0 +1,992 @@
+SANDBOX DOCUMENTATION    
+(ABDM_Milestone 2)    
+    
+Version 2.8    
+Created On 13.02.2026    
+     
+  	  
+ 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+1 Base URL and X-CM-ID    
+    
+2.Terminology Definition:    
+Bridge ID: Is client ID which provided by NHA to HIP (Its alphanumerical eg:    
+SBX_00XXXX)    
+Service ID: Is Facility ID which is generated from NHPR application (Its alphanumeric eg: IN02100000XX)    
+3.Gateway    
+3.1 Overview    
+This is the key ABDM building block that manages ABHA addresses, maintains links to health data for each ABHA address and manages consents provided by the user for sharing of their health data. It also supports exchange of interoperable health data between HIPs and HIUs. The HIE-CM enables exchange of personal health data with consent as per the Health Data Management Policy issued by NHA.     
+    
+3.2List of APIs    
+	 	 3.2.1 Auth token API       	    	    	    	    	    	    
+This API will be invoked to generate auth token.    
+URL: /api/hiecm/gateway/v3/sessions    
+Request: POST    
+Header Parameters:    
+Body Parameters:    
+Request Body:    
+    
+    
+    
+    
+    
+Response:    
+    
+    
+	 	 3.2.2 OpenID Configuration API     	    	    	    	    	    
+Openid-configuration API, defined within OpenID Connect which provides configuration information about the Identity Provider (IDP).    
+URL: /api/hiecm/gateway/v3/.well-known/openid-configuration Request: GET  Header Parameters:    
+    
+    
+Response:    
+    
+    
+	  	3.2.3 Keycloak Certificate API     	    	    	    	    	    	    
+In response to open ID configuration API, Keycloak, the open-source identity provider, provides an OAuth certificate that can be used with open source authentication requests for certificates.    
+URL: /api/hiecm/gateway/v3/certs    
+Request: GET    
+Header Parameters:    
+    
+Response:    
+    
+{    
+    "keys": [    
+        {    
+            "e": "AQAB",    
+            "kid": "AlRb5WCm8Tm9EJ_IfO9z06j9oCv51pKKFknGb_TBvK0",    
+            "kty": "RSA",    
+            "n": "mgmW7W5ZGF_G5cJevwYi8HiPcI-6qS_psnZxa4v3bkwAkyOoOd8-6ketrOI-   
+ZA2PbRbGnxFfZHiI94rdFXJ4Q9ampscsz9NocTIPMPmWydJ8A50pZaYWyikYDSJiDltq7i3WspPKSOuQHrC   
+5h9dMcCVveX5oeg0tO68Z79gwDlpcxiqDbFaphsqDvx-   
+5XkfwiqvOBaybK6_BCBPuTqWMUEuUklLYXu2X7ESHdVNFMFAjxCcCXUtP7LFdvT3nnFekRmG82QbSQSVe   4N5tPH8q0MCxSWWn2c15bDnzOF-dvfRCVPRabCzw0M-utHR9diTrWtq6Koi5buxgwM1rbk0p8Q",    
+            "use": "sig",    
+            "x5c": [    
+                   
+"MIICrzCCAZcCBgFy/3WZBjANBgkqhkiG9w0BAQsFADAbMRkwFwYDVQQDDBBjZW50cmFsLXJlZ2lzdHJ5  
+MB4XDTIwMDYyOTA5NDEzNloXDTMwMDYyOTA5NDMxNlowGzEZMBcGA1UEAwwQY2VudHJhbC1yZWdpc   
+3RyeTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJoJlu1uWRhfxuXCXr8GIvB4j3CPuqkv6b J2cWuL925MAJMjqDnfPupHraziPmQNj20Wxp8RX2R4iPeK3RVyeEPWpqbHLM/TaHEyDzD5lsnSfAOdKWW mFsopGA0iYg5bau4t1rKTykjrkB6wuYfXTHAlb3l+aHoNLTuvGe/YMA5aXMYqg2xWqYbKg78fuV5H8Iqrzg WsmyuvwQgT7k6ljFBLlJJS2F7tl+xEh3VTRTBQI8QnAl1LT+yxXb0955xXpEZhvNkG0kElXuDebTx/KtDAsUllp9   
+   
+  
+ 
+            ],    
+            "x5t": "-HZ-fkkNBhTsPHWrhATwlZflhdU",    
+            "x5t2": "tjVDNCTx7Fn0TfM-6uHvbwjWlIxIaFtGxiZZ6uJFxr4",    
+            "alg": "RS512"    
+        }    
+    ]    
+}    
+    
+3.2.4 Update bridge URL API     
+This API will be called to update the bridge base URL.    
+URL: /api/hiecm/gateway/v3/bridge/url   
+Request: PATCH   
+Header Parameters:    
+    
+    
+    
+  
+Body Parameters:    
+Request Body:    
+     
+Response:    
+    
+    
+3.2.5 Registration of Facility & Software Linkage    
+    
+Overview: The software being used by the provider must integrate with the digital building blocks of ABDM and comply with the guidelines outlined NHA. NHA maintains the national directory of all healthcare facilities. Any participating facility needs to sign up in the health facility registry at (nhpr.abdm.gov.in) This ensures that they are a valid facility which is authorized to issue health records in the ecosystem. HFR consists of information for each healthcare facility in the country – hospitals, clinics, diagnostic centres, pharmacies etc., across all systems of medicine and covering both public and private health facilities. HFR offers APIs that can be used by various stakeholders in the ecosystem. Healthcare information service provider application or healthcare repository provider application must be upgraded to become ABDM compliant.    
+    
+Registration of facility:    
+    
+Through website: https://hspsbx.abdm.gov.in/home (sandbox) , https://nhpr.abdm.gov.in/home (production)   Step-by-step user manual document access:     
+Goto https://hspsbx.abdm.gov.in/home (sandbox), https://nhpr.abdm.gov.in/home   
+(production) >>Resource center >> User Manual    
+>> Select “For Health Fecility” >>Download “User Manual” >>Refer Content    
+“A” (Health Professional ID (HPID) creation), “B” (Facility Registration) Registration of bridge services (HIP/HIU) on facility:    
+    
+Option 1: Linking through website: https://hspsbx.abdm.gov.in/home (sandbox), https://nhpr.abdm.gov.in/home (production)  Step-by-step user manual document access:     
+Goto: https://hspsbx.abdm.gov.in/home (sandbox) , https://nhpr.abdm.gov.in/home (production)    >>Resource center >> User Manual >> Select “For Health Facility” >>Download “User Manual” >>Refer Content “C” (Software Linkage).    
+    
+Option 2: Through API  This API  (https://apihspsbx.abdm.gov.in/v4/int/v1/bridges/MutipleHRPAddUpdateServices ) will be used to link multiple bridges against a facility. It will accept the facility id , facility name and list of HRP i.e. bridges.     
+Please note:      
+You must pass in all the required parameters to create the API.      
+The data needs to be passed in the required format as mentioned for each field.      
+API can refer swagger link :   
+https://apihspsbx.abdm.gov.in/v4/int/swagger-ui-ext/index.html#/Multiple%20HRP%20API/facilityAddAndUpdate >>>Go to Multi HRP API >>>and Select    
+“/v1/bridges/MutipleHRPAddUpdateServices v1MutipleHRPAddUpdateServices”    
+     
+Parameters:     
+     
+3.2.6 Find bridge by service id    
+This API will fetch the bridge details for the given service id.    
+URL: /api/hiecm/gateway/v3/bridge-service/serviceId/{serviceId}    
+Request: GET      
+Header Parameters:    
+    
+Response:    
+    
+    
+3.2.7 Find services by bridge id    
+This API will fetch all the service ID details linked with the respective bridge id.    
+URL: /api/hiecm/gateway/v3/bridge-services'  
+Request: GET   
+ Header Parameters:    
+    
+    
+Response:    
+    
+
+            ],    
+            "endpoints": {    
+                "hipEndpoints": [    
+                    {    
+                        "use": "registration",    
+                        "connectionType": "HTTPS",                           
+"address":  
+"https://events.hookdeck.com/e/src_3gsnEgI941mh/registration"    
+   
+  
+                    },    
+                    {    
+                        "use": "data-upload",    
+                        "connectionType": "HTTPS",                           
+"address":  
+"https://events.hookdeck.com/e/src_3gsnEgI941mh/dataupload"    
+                    }    
+                ],    
+                "hiuEndpoints": [    
+                    {    
+                        "use": "registration",    
+                        "connectionType": "HTTPS",                           
+"address":  
+"https://events.hookdeck.com/e/src_3gsnEgI941mh/registration"    
+                    },    
+                    {    
+                        "use": "data-upload",    
+                        "connectionType": "HTTPS",                           
+"address":  
+"https://events.hookdeck.com/e/src_3gsnEgI941mh/dataupload"    
+                    }    
+                ],    
+                "healthLockerEndpoints": [    
+                    {    
+                        "use": "registration",    
+                        "connectionType": "HTTPS",                           
+"address":  
+"https://events.hookdeck.com/e/src_3gsnEgI941mh/registration"    
+                    },    	  
+                    {    
+                        "use": "data-upload",    
+                        "connectionType": "HTTPS",                           
+"address":  
+"https://events.hookdeck.com/e/src_3gsnEgI941mh/dataupload"    
+                    }    
+                ]    
+            },    
+            "active": true    
+        }    
+    ]    }    
+   
+4 HIP Initiated Linking    
+4.1 Overview    
+    
+HIP-initiated linking is the process through which a HIP links the patient’s care context (health record) with the patient's ABHA Address, after patient registration and creation of health records (in their HMIS/LMIS system).     
+Care context (Health record) linking happens in two steps.    
+Link token generation    
+Linking care context with ABHA address after obtaining a valid link token           
+    
+Link token generation    
+To achieve linking, the HIPs need to have a valid link token using link token service    
+The link token will be used for linking the ‘n’ number of care contexts, and concurrent linkages.    
+	 	4.2  	Sequence Diagram    
+    
+        
+    
+    
+	 	4.3  	List of APIs    
+    
+4.3.1 Link token generation    
+    
+This API invoked by HIP or HRP to generate a link token.    
+URL: /api/hiecm/v3/token/generate-token Method:   
+POST Request Headers:    
+    
+    
+    
+Body Parameters:    
+    
+    
+Request Body:    
+    
+    
+Response Body:    
+    
+    
+Error scenarios:    
+   
+   
+   
+  
+ 
+
+    
+    
+4.3.2 Callback API for Link token generation    
+    
+This is a callback API triggered by HIE-CM to HIP/HRP to get the link token.    
+URL: {callback_url}/api/v3/hip/token/on-generate-token    
+Method: POST    
+    
+    
+    
+    
+Request Headers:    
+    
+    
+Body parameters:    
+    
+    
+Request Body:    
+    
+    
+Response Body    
+    	    	    
+Response    
+Code : 202 Accepted     
+    
+    
+    
+Error Scenarios:    
+    
+   
+   
+  
+ 
+
+    
+4.3.3 Linking care context    
+This API needs to be called by the HIP to link the care context against the patient ABHA address, once the HIP has the valid linking token generated against the same patient ABHA address.    
+URL: /api/hiecm/hip/v3/link/carecontext  
+Request: POST   
+Header Parameters:     
+Body Parameters:     
+Request Body:      
+    
+Response Body:     
+    
+Error scenarios:    
+    
+   
+    
+
+     
+ 
+
+    
+4.3.4 Call back API for linking care context with patient ABHA address    
+    
+This is a callback API triggered by HIE-CM to notify HIP/HRP about linked care context response.    
+URL: {callback_url}/api/v3/link/on_carecontext    
+Request: POST    
+Header Parameters:     
+  
+    
+Body Parameters:     
+Request Body:     
+Response Body:     
+    
+    
+    
+Call back HIU    
+All the HIUs who are subscribed will be notified about the linkage of care contexts.    
+    
+4.3.5 Get all patient links    
+    
+This is the PHR APP API, this api will used to fetch all link care-context for a patient. 
+URL: /api/hiecm/hip/v3/link/patient/links   
+Request: GET  
+Header Parameters:     
+    
+Request Params:    
+    
+Error scenarios:    
+    
+    
+    
+Response Body:     
+    
+    
+4.3.6 Notify care context update    
+    
+This API will be invoked by HIP after updating a health record to notify all the subscribed HIUs.    
+URL: /api/hiecm/hip/v3/link/context/notify   
+Request: POST      
+Header Parameters:     
+Body Parameters:    
+    
+Request Body:    
+    
+Request Body:    
+  
+    
+Error scenarios:    
+    
+Response Body:     
+    
+Call back HIU    
+    
+All the HIUs who are subscribed will be notified about the linkage of care contexts.    
+    
+4.3.7 Call back API for notify care context update    
+This is a callback API triggered by HIE-CM to notify HIP/HRP about care context update response.    
+URL: {callbackURL}/api/v3/links/context/on-notify  Request: POST   Header Parameters:     
+Body Parameters:    
+    
+Response Body:     
+    
+    
+    
+4.3.8 SMS Notification to patients    
+    
+This API will be invoked by HIP to trigger a SMS notification to the patient mobile number when health record is available to fetch.    
+    
+URL: /api/hiecm/hip/v3/link/patient/links/sms/notify2  
+ Request: POST    
+Header Parameters:     
+Body Parameters:    
+    
+    
+Request Body:    
+    
+    
+Error scenarios:    
+    
+
+Response Body:     
+    
+4.3.9 Callback API for SMS Notification to patients    
+    
+This is a callback API triggered by HIE-CM to notify HIP/HRP about SMS notification response.  URL: {callbackURL}/api/v3/patients/sms/on-notify   
+Request: POST   Header Parameters:     
+Body Parameters:    
+    
+Request Body:    
+    
+    
+Response Body:     
+    
+    
+    
+              5.User Initiated Linking    
+5.1 Overview    
+    
+User-initiated linking is the process in which Users/Patient search for their health records from ABDM-compliant health facilities. Once health records are found, users can link their health records with their ABHA address.    
+    
+The user must have a Patient HIU (PHR App in the current scenario) via which the user can start the discovery of health records and link the health records for future reference.    
+     
+Following are the steps involved in User initiated linking    
+User searches for a health facility that they have visited in the past.     
+The health facility must be a HIP (part of the facility registry) and linked with an HRP for discovery to be supported     
+User makes a discovery request via Patient HIU (PHR App) – i.e., requests the HIP to find any health records in their name     
+User shares his/her details through their PHR address. Details shared- Name, Date of birth, Gender, verified mobile no. with the HIP / HRP     
+The HRP/HIP is expected to search its database for any records that match this patient.     
+If there is a match, the HRP/HIP returns with the Care Context details for the records available     
+If there is no match, the HRP/HIP returns an error     
+The User can now request to link the records (care contexts) with their PHR address     
+The HRP/HIP will perform the validation by sending an OTP to the registered mobile.    
+If the authentication succeeds, the care contexts are linked to the PHR address    
+    
+    
+    
+5.2 Sequence Diagram    
+    
+    
+    
+    
+    
+    
+    	  
+  
+  
+  
+5.3List of APIs      
+5.3.1 Patient Health record discovery    
+This API will be invoked by the patient/user from the PHR application to HIECM to discover his/her health records.    
+URL: /api/hiecm/user-initiated-linking/v3/patient/care-context/discover  Request: POST   Header Parameters:     
+    
+Body Parameters:    
+    
+Request Body:    
+    
+    
+Response Body:     
+    
+    
+Error scenarios:    
+    
+   
+    
+5.3.2 HIE-CM callback to HIP - Discovery    
+This is a callback API invoked by HIE-CM to let the HIP know about the discovery request raised by the patient using HIE-CM’s discovery.    
+URL: {callback_url}/api/v3/hip/patient/care-context/discover    
+Request: POST    
+Header Parameters:    
+    
+  
+{    
+    "transactionId": "03813343-ebc5-4c9f-89b6-6e9a75fd7c92",    
+    "patient": {    
+        "id": "9167@sbx",    
+        "verifiedIdentifiers": [    
+            {    
+                "type": "MOBILE",    
+                "value": "987654XXXX"    
+    
+    
+    
+    
+    
+5.3.3 HMIS/LMIS response on health record discover    
+    
+This API will be invoked by the HMIS/LIMS application for sharing the response of discover request.    
+URL: /api/hiecm/user-initiated-linking/v3/patient/care-context/on-discover    
+Request: POST      
+Header Parameters:     
+Body Parameters:     
+    
+{    
+    "transactionId": "66446ece-396b-4f22-a1a6-756196fdffc9",    
+    "error": {    
+        "code": "ABDM-1010",    
+        "message": "Patient not found"    
+    },    
+    "response": {    
+        "requestId": "2c17a46b-d28e-4a60-a7cf-fe77163ae93c"    
+    }   }    
+    
+Response:     
+    
+Error Scenarios:    
+    
+   
+   
+    
+    
+    	    
+5.3.4 HIE-CM callback on Health record discover    
+This API will be invoked by the HIE-CM for sharing the response of health record discover.    
+    
+URL: {callback_url}/api/v3/hiu/patient/care-context/on-discover   Request: POST    
+Header Parameters:     
+Body Parameters:     
+Request Body:     
+Request Body:    
+{    
+    "transactionId": "0d36501c-551a-4bb5-b247-eec4bb42984b",    
+    "patient": [    
+        {    
+            "referenceNumber": "example01",    
+            "display": "abcd-display",    
+            "careContexts": [    
+                {    
+                    "referenceNumber": "abcd",    
+                    "display": "123-display"    
+                }    
+            ],    
+            "hiType": "PRESCRIPTION",    
+            "count": 1    
+        }    
+    ],    
+    "createdAt": "2023-06-13T08:05:43.030Z",    
+    "response": {    
+        "requestId": "d89525a2-3a3f-4d39-98b5-477afb1865f6"    
+    }    
+}    
+    
+Response:     
+    
+    
+       
+ 
+Error response: 
+ 
+
+    
+5.3.5 Patient health record link init    
+This API will be invoked by the patient to link his/her health records.    
+    
+URL: /api/hiecm/user-initiated-linking/v3/link/care-context/init   
+Request: POST   
+Header Parameters:     
+Body Parameters:     
+    
+Request Body:     
+Response:     
+    	  
+Error scenarios:    
+    
+   
+   
+    
+5.3.6 HIE-CM callback on health record link init    
+This API will be invoked by the HIE-CM to initiate the linking of patient health records to  
+HIP.    
+URL: {callback_url}/api/v3/hip/link/care-context/init   Request: POST  
+ Header Parameters:     
+Body Parameters:     
+Request Body:     
+    
+    
+    
+Response:     
+    
+    
+       
+Error Response : (Already linked care context ) 
+
+ 
+5.3.7 HMIS/LMIS response on health record link                                          
+    
+This API will be invoked by the HMIS/LMIS to share the response of link init API   
+(referenceNumber will be generated by HIP and this will used in the confirm API)    
+URL: /api/hiecm/user-initiated-linking/v3/link/care-context/on-init    
+Request: POST  
+Header  
+Parameters:     
+Body Parameters:     
+Request Body:     
+Response:     
+    
+Error scenarios:    
+    
+   
+   
+   
+
+    
+    
+5.3.8 HIE-CM response on health record link                                                               
+    
+This is a callback API that will be invoked by the HIE-CM to share the response of the link oninit request from HIP    
+URL: {callback_url}/api/v3/hiu/patient/care-context/on-init  Request: POST    
+Header Parameters:     
+Body Parameters:     
+    
+Request Body:     
+Request Body:    
+{    
+    "transactionId": "5b39f73e-b19a-421a-ab43-c97cbd903041",    
+    "link": {    
+        "referenceNumber": "4336268d-89a3-4c84-8674-aef42092d9fc",    
+        "authenticationType": " MEDIATE",    
+        "meta": {    
+            "communicationMedium": "MOBILE",    
+            "communicationHint": "OTP",    
+            "communicationExpiry": "2023-12-30T12:01:55.324Z"    
+        }    
+    },    
+    "response": {    
+        "requestId": "14a298b4-cf4a-497b-b4c1-72b50295fb91"    
+    }    
+}    
+    
+Response:     
+    
+    
+    
+    
+    
+5.3.9 Patient health record confirm                 
+    
+This API will be invoked by the patient to confirm his/her health records.    
+URL: /api/hiecm/user-initiated-linking/v3/link/care-context/confirm   
+Request: POST   Header Parameters:     
+    
+    
+    
+Body Parameters:     
+Request Body:     
+Request Body    
+{    
+    "token": 123456,    
+    "linkRefNumber": "4336268d-89a3-4c84-8674-aef42092d9fc" }    
+Response:    
+    
+Error scenarios:    
+    
+
+     
+    
+    
+ 5.3.10   HIE-CM callback for health record confirmation     
+    	    	    	    	    	    	    	    	    
+This API will be invoked by the HIE-CM to confirm patient health records to HIP    
+URL: {callback_url}/api/v3/hip/link/care-context/confirm  
+ Request: POST   Header Parameters:     
+Body Parameters:     
+Request Body:     
+Request Body:    
+ {    
+    "confirmation": {    
+        "token": "123456",    
+        "linkRefNumber": "4336268d-89a3-4c84-8674-aef42092d9fc"    
+    }    
+}    
+Response:     
+    
+       
+5.3.11 HMIS/LMIS response on health record confirm                                                
+This API will be invoked by the HIP to share the response of link confirmation API    
+URL: /api/hiecm/user-initiated-linking/v3/link/care-context/on-confirm  Request: 
+POST   
+ Header Parameters:    
+Body Parameters:    
+Request Body:    
+Request Body:    
+{    
+    "patient": [    
+        {    
+            "referenceNumber": "4336268d-89a3-4c84-8674-aef42092d9fc",             "display": "abcdefgdisplay",                "careContexts": [    
+                {    
+                    "referenceNumber": "1234",    
+                    "display": "1234-display"    
+                }    
+            ],    
+            "hiType": "PRESCRIPTION",    
+            "count": 1    
+        }    
+    ],    
+    "response": {    
+        "requestId": "f207e461-1994-4274-9b86-554384f170ab"    
+    }   }    
+Response:    
+  
+  
+  
+Error scenarios:    
+    
+  
+
+    
+    
+	 	 5.3.12  HIE-CM response on health record on-confirm    	    	    
+This is callback API will be invoked by the HIE-CM to share the response of on-confirm API from HIP.    
+URL: {callback_url}/api/v3/hiu/patient/care-context/on-confirm    
+Request: POST    
+    
+Header Parameters:    
+Body Parameters:    
+Request Body:    
+    
+  
+Response:    
+    
+Response    
+Code : 202 Accepted     
+    
+    
+    
+    
+6.Data Flow    
+6.1 Overview    
+The process of Data flow starts once the HIECM has generated Consent artefact (Consent artefact is generated only if the status of Consent request is “Granted”) and same is notified to HIP and HIU. HIU sends pushback URL to HIP via HIECM. HIP now bundles the care context or Health data of the patient as per FHIR standards and share the data via pushback data URL. HIECM is notified the status of the data shared both by HIU and HIP.    
+    
+6.2 Sequence Diagram    
+    
+    
+    
+6.3 List of APIs    
+    
+6.3.1 Callback API to HIP when a consent request is APPROVED/REVOKED    
+    
+This API is a callback to HIP when a consent request is approved/revoked.    
+URL: {callbackURL}/api/v3/consent/request/hip/notify    
+Request: POST    
+    
+    
+    
+    
+    
+Header Parameters:     
+Body parameters:     
+
+    
+    
+    
+    
+Request Body:     
+Request Body:    
+ 
+ 
+ 
+
+Response Body:     
+    
+    
+6.3.2 HIP to respond back to consent HIP notify    
+    
+This API will be invoked by HIP to respond back to the callback API     
+URL: /api/hiecm/consent/v3/request/hip/on-notify     
+Request: POST   
+Header Parameters:     
+Body parameters:     
+Request Body:     
+Response Body:     
+    
+6.3.3 Data Flow - Health information request – Callback to HIP    
+    
+This isa callback API triggered by HIE-CM to notify HIP about the health information request.    
+URL: {callback_URL}/api/v3/hip/health-information/request Request: POST  Header Parameters:    
+Body Parameters:     
+
+Request Body:     
+Request Body    
+{    
+    "hiRequest": {    
+        "consent": {    
+            "id": "d6a83f24-6c96-421e-b8b8-844e5344ef69"    
+        },    
+        "dateRange": {    
+            "from": "1924-07-09T12:05:57.151Z",    
+            "to": "2024-07-17T12:05:57.151Z"    
+        },    
+        "dataPushUrl": "https://webhook.site/2cfcc184-5d29-4e2c-974d3e56cbaa5cc1/v3/data/push",    
+        "keyMaterial": {    
+            "cryptoAlg": "ECDH",    
+            "curve": "Curve25519",    
+            "dhPublicKey": {    
+                "expiry": "2124-12-09T00:00:00.000Z",    
+                "parameters": "Curve25519/32byte random key",    
+                "keyValue":    
+"BCpsBW37KgfLyjxJK0zHHG26hDjxzK368DEO4PapzFhQM0cghZziKuvJh5/anTnHitVHKMn0Owr1HvcH1f m0DpA="    
+            },    
+            "nonce": "0ka0stPfqmXWhX+ODC/iOFMO0PXFdRjBdcEGbv55qqc="    
+        }    
+    }   }      
+    
+Response:    
+    
+    
+    
+    
+    
+    
+6.3.4 HIP acknowledgement to the health information request     
+    
+This API will be invoked by HIP to acknowledge the health information request by HIU.    
+URL: /api/hiecm/data-flow/v3/health-information/hip/on-request Request: POST  Header Parameters:    
+Body Parameters:    
+Request Body:    
+Request Body : Error scenario  
+  
+Response:    
+    
+    
+6.3.5 HIP calling data push URL    
+This API will be invoked by HIP to push the data to HIU.    
+URL: /api-hiu/data/notification   
+Request: POST    
+Body Parameters:    
+
+
+
+
+        }    
+    ],    
+    "keyMaterial": {    
+        "cryptoAlg": "ECDH",    
+        "curve": "Curve25519",    
+        "dhPublicKey": {    
+            "expiry": "{{expiry date}}",    
+            "parameters": "Curve25519/32byte random key",               
+"keyValue": "{{Key value}}"    
+        },    
+        "nonce": "{{nonce}}"    
+    }    
+}    
+    
+Response:    
+    
+    
+6.3.6 Health Information notify API     
+    
+This API will be called by HIU and HIP to notify the CM about the status of the data transfer.    
+    
+HIP on the transfer of data would send sessionStatus - one of [TRANSFERRED, FAILED]. 
+HIP would also send hiStatus for each careContextReference - on of [DELIVERED,  ERRORED]    
+    
+HIU on receipt of data would send sessionStatus - one of [RECEIVED, FAILED]. For example, ERRORED when data was not sent or if invalid data was sent. HIU would also send hiStatus for each careContextReference - one of [OK, ERRORED].   URL: /api/hiecm/data-flow/v3/health-information/notify    
+Request: POST    
+Header Parameters:    
+Body Parameters:    
+Request Body:    
+
+}    
+    
+Response:    
+    
+    
+7.Scan and Profile Share    
+7.1 Overview    
+    
+The User/Patient can share his/her basic KYC information with the    
+HMIS/LIMS by scanning the QR Code using the integrator application (Example: ABHA  
+App), which enables them to complete the seamless profile share during their visit.         
+The authenticity of the profile information is verified by the HIE-CM internally before sharing with the HMIS/LIMS.    
+    
+The content of the QR code is a URL (sample for reference:  
+https://phrsbx.abdm.gov.in/shareprofile?hipid=IN3410000260&counterid=12345) that contains 2 parameters:    
+The HIP ID    
+Facility defined context (for example: counter code)    
+      
+    
+    
+    
+    
+    
+    
+    
+      
+7.2 Sequence Diagram    
+    
+    
+    
+7.3 List of APIs    
+    
+7.3.1 Profile share    
+    
+This API will be invoked from the integrator application (any PHR application, just like ABHA) to share the user/patient profile with HMIS/LIMS.    
+    
+URL: /api/hiecm/patient-share/v3/share    
+Method: POST    
+Request Headers:    
+    
+ 
+    
+Body Parameters:    
+    
+Request Body    
+    
+
+    
+Response    
+      
+7.3.2 Profile share – Callback    
+    
+This is a callback API for patient share API.    
+    
+URL: {callback_url}/api/v3/hip/patient/share   
+Method: Post   
+Request Headers:    
+    
+    
+Body parameters    
+    
+    
+Request Body    
+    
+        }      } }    
+    
+    
+    
+    
+Response    
+    
+    
+    
+    
+    
+7.3.3 Profile on-share    
+This API will be invoked by HIP to acknowledge the request by the user/patient to share the profile details.    
+    
+URL: /api/hiecm/patient-share/v3/on-share    
+Method: Post    
+Request Headers:    
+    
+    
+Body Parameters    
+    
+    
+Request Body    
+    
+    
+Response    
+    
+    
+Request Body  : ERROR   
+-> Use this in case of error response (Ex: This is the one example for error payload and the code will be same. But, message will be change each error).   
+   
+   
+    
+   
+7.3.4 Profile on share – Callback    
+    
+This is a callback API for patient on-share API.    
+    
+URL: {callback_url}/api/v3/hiu/patient/on-share  
+ Method: Post   
+Request Headers:    
+    
+Body Parameters:    
+    
+    
+Request Body    
+    
+ 
+    
+Response    
+    
+    
+   
+8.API Listing    
+   
+   
+  
+  
+
+   
+9.Error Codes Listing    
+   
+  
+
+    

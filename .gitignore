@@ -1,0 +1,8 @@
+build/
+node_modules/
+backend/node_modules/
+.env
+.dart_tool
+.gradle/
+android/build/
+android/.gradle/
