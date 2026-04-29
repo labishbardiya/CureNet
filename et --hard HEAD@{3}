@@ -1,0 +1,11 @@
+[33mf895bca[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/RS[m[33m)[m HEAD@{0}: commit: feat: update project files and fix tracking
+[33m30ba8b1[m[33m ([m[1;32mRS[m[33m)[m HEAD@{1}: reset: moving to origin/RS
+[33mdc9a622[m HEAD@{2}: commit: chore: remove untracked build and dependency files
+[33m76406e4[m HEAD@{3}: commit: .
+[33mb01cf77[m HEAD@{4}: checkout: moving from RS to master
+[33m30ba8b1[m[33m ([m[1;32mRS[m[33m)[m HEAD@{5}: checkout: moving from master to RS
+[33mb01cf77[m HEAD@{6}: checkout: moving from RS to master
+[33m30ba8b1[m[33m ([m[1;32mRS[m[33m)[m HEAD@{7}: checkout: moving from master to RS
+[33mb01cf77[m HEAD@{8}: commit: backend-ocr-ai-integration
+[33m8175a60[m HEAD@{9}: commit: backend-ocr-ai-integration
+[33meedc1e7[m HEAD@{10}: commit (initial): backend
