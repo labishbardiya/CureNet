@@ -100,7 +100,7 @@ class ConnectivityService {
   static Future<bool> _probeBackend() async {
     try {
       final response = await http.get(
-        Uri.parse('${AppConfig.backendUrl}/api/ocr/health'),
+        Uri.parse(AppConfig.backendUrl),
       ).timeout(const Duration(seconds: 2));
       return response.statusCode == 200;
     } catch (_) {
