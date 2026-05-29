@@ -3,7 +3,9 @@ const fs = require('fs');
 require('dotenv').config();
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
-const NVIDIA_API_KEY = process.env.NVIDIA_API_KEY;
+const NVIDIA_API_KEY_11B = process.env.NVIDIA_API_KEY_11B;
+const NVIDIA_API_KEY_90B = process.env.NVIDIA_API_KEY_90B;
+const NVIDIA_API_KEY_NEMOTRON = process.env.NVIDIA_API_KEY_NEMOTRON;
 
 /**
  * ═══════════════════════════════════════════════════════════════════
@@ -254,7 +256,7 @@ async function extractWithGroq(imagePath) {
  * Determines if an image is handwritten or printed very quickly (~300ms).
  */
 async function classifyImageType(imagePath) {
-    if (!NVIDIA_API_KEY || NVIDIA_API_KEY === 'YOUR_NVIDIA_API_KEY_HERE') {
+    if (!NVIDIA_API_KEY_11B || NVIDIA_API_KEY_11B === 'YOUR_NVIDIA_API_KEY_HERE') {
         return 'printed'; // default fallback
     }
     try {
@@ -279,7 +281,7 @@ async function classifyImageType(imagePath) {
             },
             {
                 headers: {
-                    "Authorization": `Bearer ${NVIDIA_API_KEY}`,
+                    "Authorization": `Bearer ${NVIDIA_API_KEY_11B}`,
                     "Content-Type": "application/json",
                     "Accept": "application/json"
                 },
@@ -301,8 +303,9 @@ async function classifyImageType(imagePath) {
  * Dynamically routed between Llama 3.2 90B (Handwritten) and Nemotron OCR (Printed)
  */
 async function extractWithNvidia(imagePath, imageType = 'printed') {
-    if (!NVIDIA_API_KEY || NVIDIA_API_KEY === 'YOUR_NVIDIA_API_KEY_HERE') {
-        console.warn('[VisionLLM] Nvidia API Key missing. Skipping Nvidia...');
+    const apiKey = imageType === 'handwritten' ? NVIDIA_API_KEY_90B : NVIDIA_API_KEY_NEMOTRON;
+    if (!apiKey || apiKey === 'YOUR_NVIDIA_API_KEY_HERE') {
+        console.warn('[VisionLLM] Nvidia API Key missing for ' + imageType + '. Skipping Nvidia...');
         return null;
     }
 
@@ -335,7 +338,7 @@ async function extractWithNvidia(imagePath, imageType = 'printed') {
             },
             {
                 headers: {
-                    "Authorization": `Bearer ${NVIDIA_API_KEY}`,
+                    "Authorization": `Bearer ${apiKey}`,
                     "Content-Type": "application/json",
                     "Accept": "application/json"
                 },
