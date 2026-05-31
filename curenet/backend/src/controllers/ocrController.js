@@ -16,11 +16,13 @@ exports.initiateScan = async (req, res) => {
 
         const jobId = generateId();
         const userId = req.body.userId || req.query.userId || 'arjun';
+        const patientName = req.body.patientName || req.query.patientName || '';
 
         // Register tracking in memory/mock DB
         const newJob = new Record({
             jobId,
             userId,
+            patientName,
             status: 'pending',
             filePath: file.path
         });
@@ -134,7 +136,7 @@ exports.streamScanStatus = (req, res) => {
         if (record.jobId === jobId) {
             res.write(`data: ${JSON.stringify({
                 status: 'error',
-                data: { jobId: record.jobId, state: 'failed', error: record.error }
+                data: { jobId: record.jobId, state: 'failed', error: record.error, error_code: record.errorCode }
             })}\n\n`);
             cleanup();
         }

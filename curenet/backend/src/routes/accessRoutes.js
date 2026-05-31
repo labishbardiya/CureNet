@@ -150,7 +150,8 @@ router.get('/status/:requestId', async (req, res) => {
             accessStatus: accessReq.status,
             createdAt: accessReq.createdAt,
             respondedAt: accessReq.respondedAt,
-            expiresAt: accessReq.expiresAt
+            expiresAt: accessReq.expiresAt,
+            patientUserId: accessReq.patientUserId
         };
 
         // If approved and not expired, include the emergency data

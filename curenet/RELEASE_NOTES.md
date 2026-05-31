@@ -6,12 +6,17 @@
 
 ## What's New in v1.0.0
 
-### Real-Time Doctor Access Consent
+### Real-Time Doctor Access Consent & Privacy
 - Doctor scans patient QR → sends access request via **Doctor's Portal**
 - Patient's phone **auto-detects request within 4 seconds** and shows approval dialog
 - Approve/Deny with one tap — works on **any screen** in the app
 - 30-minute access window, **revocable anytime** by the patient
-- Portal shows live data on approval, rejection screen on denial
+- **Strict Privacy Enforcement**: Doctor portal strictly isolates and displays *only* the approving patient's clinical records.
+
+### Enhanced OCR Pipeline & Onboarding
+- **Smart Validation**: NVIDIA NIM `meta/llama-3.2-11b-vision-instruct` pre-classifies documents to reject non-medical or poor-lighting images instantly.
+- **Patient Constraints**: OCR strictly validates that the document belongs to the onboarded patient.
+- **ABHAy AI Upgrade**: Migrated from Groq to NVIDIA NIM (`meta/llama-3.1-70b-instruct`) for faster, higher-accuracy medical reasoning.
 
 ### Cloud Deployment (Render)
 - Backend + Doctor's Portal deployed on **Render** (cloud)

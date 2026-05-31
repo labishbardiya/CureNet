@@ -30,9 +30,14 @@ import 'connectivity_service.dart';
 ///    2. Fallback to Groq cloud API if local is unavailable
 /// ═══════════════════════════════════════════════════════════════════
 class AiService {
-  // ─── Groq Cloud (fallback) ──────────────────────────────────────
-  static const String _groqApiUrl = 'https://api.groq.com/openai/v1/chat/completions';
-  static String get _groqApiKey => AppConfig.groqApiKey;
+  // ─── NVIDIA NIM Cloud (fallback) ────────────────────────────────
+  static const String _nimApiUrl = 'https://integrate.api.nvidia.com/v1/chat/completions';
+  static String get _nimApiKey => AppConfig.nvidiaApiKey.isNotEmpty
+      ? AppConfig.nvidiaApiKey
+      : AppConfig.groqApiKey; // graceful fallback to Groq key if NIM key missing
+  static String get _nimBaseUrl => AppConfig.nvidiaApiKey.isNotEmpty
+      ? _nimApiUrl
+      : 'https://api.groq.com/openai/v1/chat/completions';
 
   // ─── Local Ollama (primary — edge-first) ────────────────────────
   static String get _ollamaApiUrl => '${AppConfig.ollamaUrl}/v1/chat/completions';
@@ -43,7 +48,10 @@ class AiService {
   /// Gemma 4 31B Dense: full-power model for medical reasoning
   static const String _gemma4Large = 'gemma4:31b';
 
-  // ─── Groq Fallback Model IDs ───────────────────────────────────
+  // ─── NVIDIA NIM Fallback Model IDs ─────────────────────────────
+  static const String _nimSmallModel = 'meta/llama-3.1-8b-instruct';
+  static const String _nimLargeModel = 'meta/llama-3.1-70b-instruct';
+  // ─── Groq Fallback (used only if NVIDIA key is missing) ────────
   static const String _groqSmallModel = 'llama-3.1-8b-instant';
   static const String _groqLargeModel = 'llama-3.3-70b-versatile';
 
@@ -105,14 +113,16 @@ ${patientData ?? (DataMode.activeUserId == DataMode.arjunId ? Persona.aiContext 
     if (await _isOllamaAvailable()) {
       return (url: _ollamaApiUrl, model: _gemma4Small, apiKey: null);
     }
-    return (url: _groqApiUrl, model: _groqSmallModel, apiKey: _groqApiKey);
+    final smallModel = AppConfig.hasNvidiaKey ? _nimSmallModel : _groqSmallModel;
+    return (url: _nimBaseUrl, model: smallModel, apiKey: _nimApiKey);
   }
 
   static Future<({String url, String model, String? apiKey})> _resolveLargeModel() async {
     if (await _isOllamaAvailable()) {
       return (url: _ollamaApiUrl, model: _gemma4Large, apiKey: null);
     }
-    return (url: _groqApiUrl, model: _groqLargeModel, apiKey: _groqApiKey);
+    final largeModel = AppConfig.hasNvidiaKey ? _nimLargeModel : _groqLargeModel;
+    return (url: _nimBaseUrl, model: largeModel, apiKey: _nimApiKey);
   }
 
   static Map<String, String> _buildHeaders(String? apiKey) {
@@ -404,8 +414,8 @@ ${patientData ?? (DataMode.activeUserId == DataMode.arjunId ? Persona.aiContext 
 
   static void init() {
     debugPrint("[AI] CureNet AI Service initialized — Gemma 4 edge-first architecture");
-    debugPrint("[AI] Primary: Gemma 4 E4B ($_gemma4Small) + 27B ($_gemma4Large) via Ollama");
-    debugPrint("[AI] Fallback: Groq Cloud ($_groqSmallModel / $_groqLargeModel)");
+    debugPrint("[AI] Primary: Gemma 4 E4B ($_gemma4Small) + 31B ($_gemma4Large) via Ollama");
+    debugPrint("[AI] Fallback: ${AppConfig.hasNvidiaKey ? 'NVIDIA NIM ($_nimSmallModel / $_nimLargeModel)' : 'Groq Cloud ($_groqSmallModel / $_groqLargeModel)'}");
     // Pre-warm connectivity cache
     ConnectivityService.refresh();
   }

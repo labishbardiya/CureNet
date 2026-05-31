@@ -6,6 +6,7 @@ import '../core/data_mode.dart';
 import '../core/auth_provider.dart';
 import '../services/ocr_service.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,10 +16,252 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String? _onboardingName;
+
   @override
   void initState() {
     super.initState();
     _requestPermissions();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkOnboarding();
+    });
+  }
+
+  Future<void> _checkOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool hasCompleted = prefs.getBool('has_completed_onboarding') ?? false;
+    
+    if (mounted) {
+      setState(() {
+        _onboardingName = prefs.getString('patient_name');
+      });
+    }
+
+    if (!hasCompleted && mounted) {
+      _showOnboardingDialog(prefs);
+    }
+  }
+
+  void _showOnboardingDialog(SharedPreferences prefs) {
+    final nameController = TextEditingController();
+    final ageController = TextEditingController();
+    String gender = 'male';
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              elevation: 16,
+              backgroundColor: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 64,
+                          height: 64,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFE8F7F7),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Center(
+                            child: Icon(Icons.person_pin, size: 36, color: Color(0xFF00A3A3)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Center(
+                        child: Text(
+                          "Welcome to CureNet!",
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w900,
+                            color: Color(0xFF0D2240),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Center(
+                        child: Text(
+                          "Let's personalize your health experience.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF5A6880),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        "FULL NAME",
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF9BA8BB),
+                          letterSpacing: 1.0,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: nameController,
+                        textCapitalization: TextCapitalization.words,
+                        decoration: InputDecoration(
+                          hintText: "Enter your full name",
+                          hintStyle: const TextStyle(color: Color(0xFF9BA8BB), fontSize: 14),
+                          filled: true,
+                          fillColor: const Color(0xFFF5F7FA),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(color: Color(0xFF00A3A3), width: 1.5),
+                          ),
+                        ),
+                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF0D2240)),
+                      ),
+                      const SizedBox(height: 18),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 4,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "AGE",
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w900,
+                                    color: Color(0xFF9BA8BB),
+                                    letterSpacing: 1.0,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                TextField(
+                                  controller: ageController,
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    hintText: "Age",
+                                    hintStyle: const TextStyle(color: Color(0xFF9BA8BB), fontSize: 14),
+                                    filled: true,
+                                    fillColor: const Color(0xFFF5F7FA),
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(color: Color(0xFF00A3A3), width: 1.5),
+                                    ),
+                                  ),
+                                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF0D2240)),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            flex: 6,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "GENDER",
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w900,
+                                    color: Color(0xFF9BA8BB),
+                                    letterSpacing: 1.0,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFF5F7FA),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<String>(
+                                      value: gender,
+                                      isExpanded: true,
+                                      icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF0D2240)),
+                                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF0D2240)),
+                                      items: const [
+                                        DropdownMenuItem(value: 'male', child: Text("Male")),
+                                        DropdownMenuItem(value: 'female', child: Text("Female")),
+                                        DropdownMenuItem(value: 'other', child: Text("Other")),
+                                      ],
+                                      onChanged: (val) {
+                                        if (val != null) {
+                                          setModalState(() {
+                                            gender = val;
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 28),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final name = nameController.text.trim();
+                          final age = ageController.text.trim();
+                          if (name.isEmpty || age.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Please fill in all fields")),
+                            );
+                            return;
+                          }
+                          
+                          await prefs.setString('patient_name', name);
+                          await prefs.setString('patient_age', age);
+                          await prefs.setString('patient_gender', gender);
+                          await prefs.setBool('has_completed_onboarding', true);
+                          
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                            setState(() {
+                              _onboardingName = name;
+                            });
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0D2240),
+                          minimumSize: const Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: const Text(
+                          "Complete Setup",
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   Future<void> _requestPermissions() async {
@@ -32,7 +275,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final user = auth.userProfile;
     final String userName = (user != null && user['name'] != null && user['name'].toString().trim().isNotEmpty)
         ? user['name'].toString()
-        : (DataMode.activeUserId == DataMode.arjunId ? Persona.name : 'Live User');
+        : (DataMode.activeUserId == DataMode.arjunId
+            ? Persona.name
+            : (_onboardingName ?? 'Live User'));
     final String abha = (user != null && user['abha'] != null && user['abha'].toString().trim().isNotEmpty)
         ? user['abha'].toString()
         : (DataMode.activeUserId == DataMode.arjunId ? Persona.abhaNumber : '91-LIVE-0000-0001');

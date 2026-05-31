@@ -224,7 +224,10 @@ async function pollStatus() {
         renderEmergencyCard(currentEmergencyData);
         showView('view-card');
         showToast('✓ Patient approved access');
-        fetchRecords();
+        
+        // Use the patientUserId returned by the backend to fetch ONLY this patient's records
+        const patientUserId = data.patientUserId;
+        fetchRecords(patientUserId);
 
         // Continue polling to detect revocation
         startRevocationPolling();
@@ -342,9 +345,10 @@ function renderEmergencyCard(data) {
 }
 
 // ─── Fetch Records ─────────────────────────────────────────────
-async function fetchRecords() {
+async function fetchRecords(userId) {
   try {
-    const res = await fetch(`${API_BASE}/api/records/all`);
+    const url = userId ? `${API_BASE}/api/records/all?userId=${encodeURIComponent(userId)}` : `${API_BASE}/api/records/all`;
+    const res = await fetch(url);
     if (!res.ok) return;
     const json = await res.json();
     currentRecords = json.data || [];
