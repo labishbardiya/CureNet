@@ -11,6 +11,12 @@ const RecordSchema = new mongoose.Schema({
         default: 'arjun',
         index: true
     },
+    patientName: {
+        type: String
+    },
+    errorCode: {
+        type: String
+    },
     status: {
         type: String,
         enum: ['pending', 'processing', 'completed', 'failed'],

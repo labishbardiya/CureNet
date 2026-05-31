@@ -32,7 +32,8 @@ const NVIDIA_API_KEY_NEMOTRON = process.env.NVIDIA_API_KEY_NEMOTRON;
 const OLLAMA_URL = process.env.OLLAMA_URL || 'http://localhost:11434';
 const GEMMA4_MODEL = process.env.GEMMA4_MODEL || 'gemma4:31b';
 
-const VISION_PROMPT = `You are a medical data extraction expert. Analyze this clinical document image carefully.
+function buildVisionPrompt(patientName = null, docType = null) {
+  let prompt = `You are a medical data extraction expert. Analyze this clinical document image carefully.
 This could be a PRESCRIPTION or a LAB REPORT. Detect which type it is and extract ALL information.
 
 Return ONLY valid JSON in this exact format:
@@ -96,8 +97,23 @@ Rules:
 - Distinguish carefully between Medications (things to consume/inject) and Advice.
 - Indian prescription frequency: morning+afternoon+night (e.g., 1+0+1)
 - Common abbreviations: Tab=Tablet, Cap=Capsule, Syp=Syrup, Inj=Injection, ORS=Oral Rehydration Salts
+- Pay EXTREME attention to medication names. Cross-reference with common Indian brand names (e.g., Dolo, Crocin, Augmentin, Pan-D, Shelcal, Ecosprin, Thyronorm, Metformin, Amlodipine).
+- For dosage, distinguish between strength (e.g., 500mg) and quantity (e.g., 1 tablet). Put strength in 'dosage' and quantity+timing in 'frequency'.
+- Common Indian frequency patterns: OD=once daily, BD=twice daily, TDS=thrice daily, QID=four times daily, HS=at bedtime, SOS=as needed, AC=before food, PC=after food, Stat=immediately.
+- For lab reports: extract ALL test values with their units and reference ranges. Do not skip any test.
 - Do NOT hallucinate — if truly unreadable, mark as 'unclear'
 - Return ONLY the JSON, no markdown formatting. Ensure ALL medications on the page are included.`;
+
+  if (patientName) {
+    prompt += `\n\nIMPORTANT PATIENT CONTEXT:\n- The expected patient name is: "${patientName}"\n- Check if this name or a close variation appears on the document.\n- If the document clearly belongs to a DIFFERENT person, include a field "name_mismatch": true in your response and set "detected_patient_name" to the name you found on the document.\n- If names match or are similar, set "name_mismatch": false.`;
+  }
+
+  if (docType) {
+    prompt += `\nThis document has been pre-classified as: ${docType}. Focus your extraction accordingly.`;
+  }
+
+  return prompt;
+}
 
 
 /**
@@ -110,7 +126,7 @@ Rules:
  * a zero-shot structure prompt, reliably outputting strict FHIR R4
  * compliant JSON bundles.
  */
-async function extractWithGemma4Local(imagePath) {
+async function extractWithGemma4Local(imagePath, patientName = null, docType = null) {
     try {
         // Check if Ollama is reachable
         const healthCheck = await axios.get(`${OLLAMA_URL}/api/tags`, { timeout: 2000 })
@@ -134,7 +150,7 @@ async function extractWithGemma4Local(imagePath) {
                     {
                         role: "user",
                         content: [
-                            { type: "text", text: VISION_PROMPT + "\nIMPORTANT: Return ONLY valid JSON. No conversational filler. No markdown formatting." },
+                            { type: "text", text: buildVisionPrompt(patientName, docType) + "\nIMPORTANT: Return ONLY valid JSON. No conversational filler. No markdown formatting." },
                             { type: "image_url", image_url: { url: `data:${mimeType};base64,${imageContent}` } }
                         ]
                     }
@@ -183,7 +199,7 @@ async function extractWithGemma4Local(imagePath) {
  * FALLBACK 1: Groq Vision API (Llama 4 Scout)
  * Used when local Gemma 4 Ollama instance is not available.
  */
-async function extractWithGroq(imagePath) {
+async function extractWithGroq(imagePath, patientName = null, docType = null) {
     if (!GROQ_API_KEY) {
         console.warn('[VisionLLM] Groq API Key missing. Skipping Groq...');
         return null;
@@ -203,7 +219,7 @@ async function extractWithGroq(imagePath) {
                     {
                         role: "user",
                         content: [
-                            { type: "text", text: VISION_PROMPT + "\nIMPORTANT: Return ONLY valid JSON. No conversational filler. No markdown formatting." },
+                            { type: "text", text: buildVisionPrompt(patientName, docType) + "\nIMPORTANT: Return ONLY valid JSON. No conversational filler. No markdown formatting." },
                             { type: "image_url", image_url: { url: `data:${mimeType};base64,${imageContent}` } }
                         ]
                     }
@@ -256,8 +272,9 @@ async function extractWithGroq(imagePath) {
  * Determines if an image is handwritten or printed very quickly (~300ms).
  */
 async function classifyImageType(imagePath) {
+    const defaultResult = { isMedical: true, lighting: 'GOOD', docType: 'PRESCRIPTION', writingType: 'PRINTED' };
     if (!NVIDIA_API_KEY_11B || NVIDIA_API_KEY_11B === 'YOUR_NVIDIA_API_KEY_HERE') {
-        return 'printed'; // default fallback
+        return defaultResult;
     }
     try {
         const imageContent = fs.readFileSync(imagePath).toString('base64');
@@ -271,13 +288,21 @@ async function classifyImageType(imagePath) {
                     {
                         role: "user",
                         content: [
-                            { type: "text", text: "Is this image predominantly handwritten or printed? Reply with a single word: HANDWRITTEN or PRINTED." },
+                            { type: "text", text: `Analyze this document image and respond with ONLY a JSON object:
+{"is_medical": true/false, "lighting": "GOOD"/"POOR", "doc_type": "PRESCRIPTION"/"LAB_REPORT"/"DISCHARGE_SUMMARY"/"OTHER_MEDICAL", "writing_type": "HANDWRITTEN"/"PRINTED"}
+Rules:
+- is_medical: true if this is a medical document (prescription, lab report, discharge summary, clinical note). false if it's a random photo, selfie, food, landscape, etc.
+- lighting: GOOD if text is reasonably readable. POOR if the image is too dark, blurry, or washed out to extract text.
+- doc_type: classify the medical document type. Use OTHER_MEDICAL if it's medical but doesn't fit the categories.
+- writing_type: HANDWRITTEN if the main content is handwritten, PRINTED if typed/printed.
+Return ONLY the JSON, nothing else.` },
                             { type: "image_url", image_url: { url: `data:${mimeType};base64,${imageContent}` } }
                         ]
                     }
                 ],
-                max_tokens: 10,
-                temperature: 0.1
+                max_tokens: 100,
+                temperature: 0.1,
+                response_format: { type: "json_object" }
             },
             {
                 headers: {
@@ -289,12 +314,20 @@ async function classifyImageType(imagePath) {
             }
         );
         
-        const textResult = response.data?.choices?.[0]?.message?.content?.trim().toUpperCase() || 'PRINTED';
-        if (textResult.includes('HANDWRITTEN')) return 'handwritten';
-        return 'printed';
+        const textResult = response.data?.choices?.[0]?.message?.content?.trim() || '';
+        const jsonMatch = textResult.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) return defaultResult;
+
+        const parsed = JSON.parse(jsonMatch[0]);
+        return {
+            isMedical: parsed.is_medical !== false,
+            lighting: parsed.lighting === 'POOR' ? 'POOR' : 'GOOD',
+            docType: parsed.doc_type || 'PRESCRIPTION',
+            writingType: (parsed.writing_type || 'PRINTED').toUpperCase()
+        };
     } catch (err) {
         console.error('[VisionLLM] Classification failed:', err.message);
-        return 'printed'; // fallback to printed
+        return defaultResult;
     }
 }
 
@@ -302,7 +335,7 @@ async function classifyImageType(imagePath) {
  * FALLBACK 2: Nvidia NIM Vision API
  * Dynamically routed between Llama 3.2 90B (Handwritten) and Nemotron OCR (Printed)
  */
-async function extractWithNvidia(imagePath, imageType = 'printed') {
+async function extractWithNvidia(imagePath, imageType = 'printed', patientName = null, docType = null) {
     const apiKey = imageType === 'handwritten' ? NVIDIA_API_KEY_90B : NVIDIA_API_KEY_NEMOTRON;
     if (!apiKey || apiKey === 'YOUR_NVIDIA_API_KEY_HERE') {
         console.warn('[VisionLLM] Nvidia API Key missing for ' + imageType + '. Skipping Nvidia...');
@@ -328,7 +361,7 @@ async function extractWithNvidia(imagePath, imageType = 'printed') {
                     {
                         role: "user",
                         content: [
-                            { type: "text", text: VISION_PROMPT + "\nIMPORTANT: Return ONLY valid JSON. No conversational filler. No markdown formatting." },
+                            { type: "text", text: buildVisionPrompt(patientName, docType) + "\nIMPORTANT: Return ONLY valid JSON. No conversational filler. No markdown formatting." },
                             { type: "image_url", image_url: { url: `data:${mimeType};base64,${imageContent}` } }
                         ]
                     }
@@ -433,22 +466,34 @@ function getMockData() {
  *    3. Nvidia NIM — Llama 3.2 90B (high-accuracy cloud fallback)
  *    4. Mock data (demo fallback if all APIs fail)
  */
-exports.extractWithVisionLlm = async (imagePath) => {
-    // 1. Try Gemma 4 31B Dense via local Ollama (PRIMARY — edge-first)
-    const gemma4Result = await extractWithGemma4Local(imagePath);
+exports.extractWithVisionLlm = async (imagePath, patientName = null) => {
+    // 1. Pre-classify the document (medical validity, lighting, type, writing)
+    const classification = await classifyImageType(imagePath);
+    console.log(`[VisionLLM] Classification: medical=${classification.isMedical}, lighting=${classification.lighting}, type=${classification.docType}, writing=${classification.writingType}`);
+
+    if (!classification.isMedical) {
+        return { error: 'NOT_MEDICAL', message: 'This does not appear to be a medical document. Please scan a valid prescription, lab report, or clinical document.' };
+    }
+
+    if (classification.lighting === 'POOR') {
+        return { error: 'POOR_LIGHTING', message: 'The image quality is too poor to read. Please ensure adequate lighting, hold the camera steady, and avoid shadows on the document.' };
+    }
+
+    const { docType, writingType } = classification;
+    const imageType = writingType === 'HANDWRITTEN' ? 'handwritten' : 'printed';
+
+    // 2. Try Gemma 4 31B Dense via local Ollama (PRIMARY — edge-first)
+    const gemma4Result = await extractWithGemma4Local(imagePath, patientName, docType);
     if (gemma4Result) return gemma4Result;
 
-    // 2. Classify Image Type (Handwritten vs Printed) using lightweight 11B model
-    const imageType = await classifyImageType(imagePath);
-
     // 3. Try Nvidia NIM Vision (cloud fallback — high accuracy smart routing)
-    const nvidiaResult = await extractWithNvidia(imagePath, imageType);
+    const nvidiaResult = await extractWithNvidia(imagePath, imageType, patientName, docType);
     if (nvidiaResult) return nvidiaResult;
 
     // 4. Try Groq Vision (cloud fallback — fast)
-    const groqResult = await extractWithGroq(imagePath);
+    const groqResult = await extractWithGroq(imagePath, patientName, docType);
     if (groqResult) return groqResult;
 
-    // 4. Mock fallback (demo)
+    // 5. Mock fallback (demo)
     return getMockData();
 };

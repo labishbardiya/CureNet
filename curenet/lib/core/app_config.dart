@@ -54,4 +54,10 @@ class AppConfig {
   /// Override with: --dart-define=OLLAMA_URL=http://WORKSTATION_IP:11434
   static String get ollamaUrl =>
       const String.fromEnvironment('OLLAMA_URL', defaultValue: 'http://localhost:11434');
+
+  /// NVIDIA NIM API Key for ABHAy AI cloud fallback
+  static String get nvidiaApiKey =>
+      const String.fromEnvironment('NVIDIA_API_KEY', defaultValue: '');
+
+  static bool get hasNvidiaKey => nvidiaApiKey.isNotEmpty;
 }

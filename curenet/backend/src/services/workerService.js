@@ -44,8 +44,18 @@ const runJob = async (jobRecord) => {
         // 2. PRIMARY PATH: Vision LLM (Production Path)
         // Strictly use the API if available as requested by user.
         console.log('[Worker] Strictly using Vision LLM API for high-accuracy extraction...');
-        const visionData = await extractWithVisionLlm(processedImagePath);
+        const visionData = await extractWithVisionLlm(processedImagePath, jobRecord.patientName);
         
+        if (visionData && visionData.error) {
+            console.log(`[Worker] Pre-classification rejected document: ${visionData.error} - ${visionData.message}`);
+            jobRecord.status = 'failed';
+            jobRecord.error = visionData.message;
+            jobRecord.errorCode = visionData.error;
+            await jobRecord.save();
+            eventQueue.emit('jobFailed', jobRecord);
+            return;
+        }
+
         if (visionData) {
             structuredData = visionData;
             raw_text = JSON.stringify(visionData); // Use structured data as source of truth

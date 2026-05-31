@@ -13,6 +13,7 @@ import '../core/translated_text.dart';
 import 'scan_result_screen.dart';
 import '../core/app_config.dart';
 import '../core/data_mode.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DocScanScreen extends StatefulWidget {
   const DocScanScreen({super.key});
@@ -144,9 +145,15 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
     });
 
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final patientName = prefs.getString('patient_name') ?? '';
+
       var request = http.MultipartRequest('POST', Uri.parse('$_ocrApiUrl/scan'));
       // Tag the record with the active user identity
       request.fields['userId'] = DataMode.activeUserId;
+      if (patientName.isNotEmpty) {
+        request.fields['patientName'] = patientName;
+      }
       if (kIsWeb) {
         final bytes = await file.readAsBytes();
         request.files.add(http.MultipartFile.fromBytes('file', bytes, filename: file.name));
@@ -190,75 +197,174 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
   void _listenForSSE(String jobId) async {
     try {
       final request = http.Request('GET', Uri.parse('$_ocrApiUrl/stream/$jobId'));
-      final response = await http.Client().send(request);
+      final client = http.Client();
+      final response = await client.send(request);
 
       if (response.statusCode != 200) {
         throw Exception('Stream returned ${response.statusCode}');
       }
 
-      response.stream.transform(utf8.decoder).listen((data) {
-        final lines = data.split('\n');
-        for (var line in lines) {
-          if (line.startsWith('data: ')) {
-            final jsonStr = line.substring(6).trim();
-            if (jsonStr.isEmpty) continue;
-            try {
-              final jsonData = jsonDecode(jsonStr);
-              if (jsonData['status'] == 'connected') continue;
-              
-              if (jsonData['status'] == 'success') {
-                setState(() {
-                  _isProcessing = false;
-                  _statusText = "ABDM FHIR Bundle Ready!";
-                });
+      // Buffer for accumulating partial SSE chunks
+      StringBuffer sseBuffer = StringBuffer();
+      bool completed = false;
+
+      // 60s timeout — never hang forever
+      final timeout = Timer(const Duration(seconds: 60), () {
+        if (!completed && mounted) {
+          client.close();
+          setState(() {
+            _isProcessing = false;
+            _pickedFile = null;
+            _statusText = "Request timed out. Please try again.";
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Processing timed out. The server may be busy. Please try again."),
+              backgroundColor: Colors.orange,
+              duration: Duration(seconds: 5),
+            ),
+          );
+        }
+      });
+
+      response.stream.transform(utf8.decoder).listen((chunk) {
+        sseBuffer.write(chunk);
+        
+        // Process complete SSE events (delimited by double newline)
+        String buffer = sseBuffer.toString();
+        while (buffer.contains('\n\n')) {
+          int idx = buffer.indexOf('\n\n');
+          String event = buffer.substring(0, idx);
+          buffer = buffer.substring(idx + 2);
+          
+          for (var line in event.split('\n')) {
+            if (line.startsWith('data: ')) {
+              final jsonStr = line.substring(6).trim();
+              if (jsonStr.isEmpty) continue;
+              try {
+                final jsonData = jsonDecode(jsonStr);
+                if (jsonData['status'] == 'connected') continue;
                 
-                if (mounted) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ScanResultScreen(
-                        uiData: jsonData['data']['ui_data'] ?? {},
-                        fhirBundle: jsonData['data']['fhir_bundle'] ?? jsonData['data']['fhirBundle'] ?? {},
-                        abdmContext: jsonData['data']['abdmContext'] ?? {},
-                        imagePath: _pickedFile?.path,
+                if (jsonData['status'] == 'success') {
+                  completed = true;
+                  timeout.cancel();
+                  client.close();
+
+                  // Check for name mismatch warning
+                  final uiData = jsonData['data']['ui_data'] ?? {};
+                  final nameMismatch = uiData['name_mismatch'] == true;
+                  final detectedName = uiData['detected_patient_name'] ?? '';
+                  
+                  setState(() {
+                    _isProcessing = false;
+                    _statusText = "ABDM FHIR Bundle Ready!";
+                  });
+
+                  if (mounted) {
+                    // Show name mismatch warning if detected
+                    if (nameMismatch && detectedName.isNotEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("⚠️ Name mismatch: Document belongs to \"$detectedName\". Please verify."),
+                          backgroundColor: Colors.orange,
+                          duration: const Duration(seconds: 5),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Row(
+                            children: [
+                              Icon(Icons.check_circle, color: Colors.white, size: 20),
+                              SizedBox(width: 8),
+                              Text("Document processed successfully!"),
+                            ],
+                          ),
+                          backgroundColor: Colors.green,
+                          duration: Duration(seconds: 3),
+                        ),
+                      );
+                    }
+
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ScanResultScreen(
+                          uiData: uiData,
+                          fhirBundle: jsonData['data']['fhir_bundle'] ?? jsonData['data']['fhirBundle'] ?? {},
+                          abdmContext: jsonData['data']['abdmContext'] ?? {},
+                          imagePath: _pickedFile?.path,
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  }
+                } else if (jsonData['status'] == 'error') {
+                  completed = true;
+                  timeout.cancel();
+                  client.close();
+
+                  final errorCode = jsonData['data']['error_code'] ?? '';
+                  String errorMsg;
+                  IconData errorIcon = Icons.error_outline;
+                  Color errorColor = Colors.red;
+
+                  if (errorCode == 'NOT_MEDICAL') {
+                    errorMsg = "This doesn't appear to be a medical document. Please scan a valid prescription, lab report, or clinical document.";
+                    errorIcon = Icons.description_outlined;
+                    errorColor = Colors.orange;
+                  } else if (errorCode == 'POOR_LIGHTING') {
+                    errorMsg = "Image quality is too poor. Tips:\n• Use adequate lighting\n• Hold camera steady\n• Avoid shadows on document\n• Place document on a flat surface";
+                    errorIcon = Icons.wb_sunny_outlined;
+                    errorColor = Colors.amber.shade700;
+                  } else {
+                    errorMsg = jsonData['data']['error'] ?? "Processing failed. Please try again.";
+                  }
+                  
+                  setState(() {
+                    _isProcessing = false;
+                    _pickedFile = null;
+                    _statusText = "Processing failed. Please try again.";
+                  });
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Row(
+                          children: [
+                            Icon(errorIcon, color: Colors.white, size: 20),
+                            const SizedBox(width: 8),
+                            Expanded(child: Text(errorMsg)),
+                          ],
+                        ),
+                        backgroundColor: errorColor,
+                        duration: const Duration(seconds: 6),
+                      ),
+                    );
+                  }
                 }
-              } else if (jsonData['status'] == 'error') {
-                String errorMsg = jsonData['data']['error'] ?? "Job Failed.";
-                errorMsg += " Ensure sufficient lighting and that it's a valid medical document.";
-                
-                setState(() {
-                  _isProcessing = false;
-                  _pickedFile = null;
-                  _statusText = "Processing failed. Please try again.";
-                });
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(errorMsg),
-                      backgroundColor: Colors.red,
-                      duration: const Duration(seconds: 5),
-                    ),
-                  );
-                }
+              } catch (e) {
+                // Incomplete JSON — will be completed in next chunk
               }
-            } catch (e) {
-              // Ignore partial JSON chunks
             }
           }
         }
+        sseBuffer = StringBuffer()..write(buffer);
       }, onError: (err) {
-        // Fallback or error handling
-        setState(() {
-          _isProcessing = false;
-          _pickedFile = null;
-          _statusText = "Stream disconnected.";
-        });
+        if (!completed) {
+          timeout.cancel();
+          client.close();
+          setState(() {
+            _isProcessing = false;
+            _pickedFile = null;
+            _statusText = "Stream disconnected.";
+          });
+        }
       });
     } catch (e) {
-      // Error
+      setState(() {
+        _isProcessing = false;
+        _pickedFile = null;
+        _statusText = "Connection failed. Please try again.";
+      });
     }
   }
 
