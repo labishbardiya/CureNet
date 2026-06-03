@@ -68,9 +68,9 @@ class _RecordsScreenState extends State<RecordsScreen> {
     }
   }
 
-  void _openRecord(Map<String, dynamic> record) {
+  void _openRecord(Map<String, dynamic> record) async {
     if (record['hasFullData'] == true && record['uiData'] != null) {
-      Navigator.push(context, MaterialPageRoute(
+      await Navigator.push(context, MaterialPageRoute(
         builder: (_) => ScanResultScreen(
           uiData: Map<String, dynamic>.from(record['uiData']),
           fhirBundle: Map<String, dynamic>.from(record['fhirBundle'] ?? {}),
@@ -81,6 +81,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
           isFromLocker: record['savedToLocker'] == true,
         ),
       ));
+      _loadRecords();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Opened ${record['title']}"), backgroundColor: const Color(0xFF00A3A3)),
@@ -573,9 +574,10 @@ class _RecordsScreenState extends State<RecordsScreen> {
   @override
   Widget build(BuildContext context) {
     final String currentTab = tabs[activeTab];
+    final nonLockerRecords = allRecords.where((r) => r['savedToLocker'] != true).toList();
     final filteredRecords = currentTab == "All"
-        ? allRecords
-        : allRecords.where((r) => r['category'] == currentTab).toList();
+        ? nonLockerRecords
+        : nonLockerRecords.where((r) => r['category'] == currentTab).toList();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
@@ -595,7 +597,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
                 const SizedBox(width: 12),
                 const TranslatedText("Health Records", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Color(0xFF0D2240))),
                 const Spacer(),
-                Text("${allRecords.length}", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF00A3A3))),
+                Text("${nonLockerRecords.length}", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF00A3A3))),
                 const SizedBox(width: 4),
                 const Text("records", style: TextStyle(fontSize: 12, color: Color(0xFF9BA8BB))),
               ],

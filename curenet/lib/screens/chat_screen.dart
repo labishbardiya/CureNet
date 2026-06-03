@@ -625,10 +625,11 @@ class _ChatScreenState extends State<ChatScreen> {
                 Column(
                   children: [
                     TranslatedText("Abhya AI", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textColor)),
-                    Text(
-                      _isTemporary ? "Temporary Chat" : "Llama 3.3 · Medical RAG", 
-                      style: TextStyle(fontSize: 10, color: _isTemporary ? Colors.orange : const Color(0xFF10A37F)),
-                    ),
+                    if (_isTemporary)
+                      const Text(
+                        "Temporary Chat", 
+                        style: TextStyle(fontSize: 10, color: Colors.orange),
+                      ),
                   ],
                 ),
                 const Spacer(),

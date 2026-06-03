@@ -54,7 +54,7 @@ class _HealthLockerScreenState extends State<HealthLockerScreen> {
   void _unlockAndView(Map<String, dynamic> record, String title) async {
     // 2. Open the rendered FHIR view if we have full data
     if (record['uiData'] != null && mounted) {
-      Navigator.push(context, MaterialPageRoute(
+      await Navigator.push(context, MaterialPageRoute(
         builder: (_) => ScanResultScreen(
           uiData: Map<String, dynamic>.from(record['uiData']),
           fhirBundle: Map<String, dynamic>.from(record['fhirBundle'] ?? {}),
@@ -65,6 +65,7 @@ class _HealthLockerScreenState extends State<HealthLockerScreen> {
           isFromLocker: true,
         ),
       ));
+      _loadLockerRecords();
     }
   }
 
