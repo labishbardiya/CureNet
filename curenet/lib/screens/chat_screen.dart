@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:async';
-import '../core/theme.dart';
 import '../core/voice_helper.dart';
 import '../core/translated_text.dart';
 import '../core/app_language.dart';
@@ -9,7 +9,6 @@ import 'dart:convert';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:curenet/core/navigation_helper.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../core/auth_provider.dart';
@@ -90,7 +89,7 @@ class _ChatScreenState extends State<ChatScreen> {
           "role": "bot",
           "text": temporary 
             ? "Temporary Chat Active: Your messages won't be saved to history once you leave." 
-            : "Namaste! I'm Abhya, your health assistant. How can I help you today?"
+            : "Namaste! I'm ABHAy, your health assistant. How can I help you today?"
         },
       ];
       
@@ -189,7 +188,7 @@ class _ChatScreenState extends State<ChatScreen> {
               setState(() => _isListening = false);
             }
           },
-          onError: (val) => print('onError: $val'),
+          onError: (val) => debugPrint('STT onError: $val'),
         );
         if (available) {
           setState(() => _isListening = true);
@@ -247,7 +246,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final prefs = await SharedPreferences.getInstance();
     final String? recordsJson = prefs.getString(DataMode.storageKey('health_records'));
     final String? abhaAddress = prefs.getString('abha_address') ?? 'Not provided';
-    final String? userName = prefs.getString('user_name') ?? 'Priya Sharma';
+    final String? userName = prefs.getString('user_name') ?? 'User';
 
     String context = "[PATIENT_PROFILE]\nName: $userName\nABHA: $abhaAddress\n\n[MEDICAL_RECORDS]\n";
     
@@ -308,7 +307,7 @@ class _ChatScreenState extends State<ChatScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _messages[botMsgIndex]["text"] = "I'm having trouble connecting to Abhya AI. Please check your internet.";
+          _messages[botMsgIndex]["text"] = "I'm having trouble connecting to ABHAy AI. Please check your internet.";
           _isTyping = false;
         });
       }
@@ -383,7 +382,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       boxShadow: [
                         if (!_isDarkMode) BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withValues(alpha: 0.05),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -474,7 +473,6 @@ class _ChatScreenState extends State<ChatScreen> {
         builder: (context, setModalState) {
           final sheetBg = _isDarkMode ? const Color(0xFF171717) : Colors.white;
           final sheetText = _isDarkMode ? Colors.white : const Color(0xFF374151);
-          final sheetSubText = _isDarkMode ? Colors.white60 : Colors.black54;
 
           return Container(
             decoration: BoxDecoration(
@@ -544,7 +542,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.redAccent.withOpacity(0.1),
+                      backgroundColor: Colors.redAccent.withValues(alpha: 0.1),
                       foregroundColor: Colors.redAccent,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -624,7 +622,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 const Spacer(),
                 Column(
                   children: [
-                    TranslatedText("Abhya AI", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textColor)),
+                    TranslatedText("ABHAy AI", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textColor)),
                     if (_isTemporary)
                       const Text(
                         "Temporary Chat", 
@@ -686,15 +684,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 }
                 
                 final msg = _messages[index];
-                // ONLY animate the FINAL completed message (not during streaming)
-                // During streaming, _isTyping is false but text is still being appended.
-                // We detect "streaming in progress" by checking if this is the last bot message 
-                // and fullReply is still growing (empty text = still loading).
-                final bool isLastBotMsg = index == _messages.length - 1 && msg["role"] == "bot";
-                final bool isStreaming = isLastBotMsg && _isTyping;
-                final bool shouldAnimate = false; // Disable TypingText — streaming IS the animation
-                
-                return _buildMessageBubble(msg, animate: shouldAnimate);
+                return _buildMessageBubble(msg, animate: false);
               },
             ),
           ),
@@ -714,7 +704,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: borderColor),
                 boxShadow: [
-                  if (!_isDarkMode) BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 2)),
+                  if (!_isDarkMode) BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 2)),
                 ],
               ),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -1116,7 +1106,7 @@ class _VoicePulseAnimationState extends State<VoicePulseAnimation> with SingleTi
           height: 24 + (16 * _controller.value),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.red.withOpacity(0.5 * (1 - _controller.value)),
+            color: Colors.red.withValues(alpha: 0.5 * (1 - _controller.value)),
           ),
         );
       },

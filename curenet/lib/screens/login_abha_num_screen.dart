@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../core/theme.dart';
+import 'package:flutter/foundation.dart';
 import '../core/translated_text.dart';
 import '../core/abdm_crypto.dart';
 import '../services/abdm_service.dart';
@@ -149,7 +149,7 @@ class _LoginAbhaNumScreenState extends State<LoginAbhaNumScreen> {
 
                       } catch (e) {
                         // Fallback constraint (Handles Sandbox DNS/VPN errors seamlessly if offline)
-                        print("ABDM Sandbox failure (Offline): $e");
+                        debugPrint("ABDM Sandbox failure (Offline): $e");
                         if (!mounted) return;
                         setState(() => _isLoading = false);
                         Navigator.pushNamed(

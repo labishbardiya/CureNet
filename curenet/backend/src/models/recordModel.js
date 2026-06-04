@@ -8,7 +8,7 @@ const RecordSchema = new mongoose.Schema({
     },
     userId: {
         type: String,
-        default: 'arjun',
+        default: 'anonymous',
         index: true
     },
     patientName: {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../core/theme.dart';
 import '../core/translated_text.dart';
 import '../services/abdm_service.dart';
 import '../core/abdm_crypto.dart';

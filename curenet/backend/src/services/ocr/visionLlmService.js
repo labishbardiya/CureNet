@@ -409,48 +409,14 @@ async function extractWithNvidia(imagePath, imageType = 'printed', patientName =
 
 
 /**
- * LAST RESORT: Mock data for demo purposes
+ * LAST RESORT: All AI providers failed — return an error.
+ * No fake data is ever fabricated.
  */
 function getMockData() {
-    console.warn('[VisionLLM] All providers failed. Returning mock data for demo...');
+    console.error('[VisionLLM] All providers failed. Returning error.');
     return {
-        patient_name: "Vivek S.",
-        doctor_name: "Dr. (unclear signature)",
-        date: "2022-12-22",
-        clinic: "Adichunchanagiri Institute of Medical Sciences Hospital & Research Centre",
-        chief_complaint: "c/o giddiness, restlessness. Imp: hypoglycemic (RBS - 50mg/dL). O/E BP - 110/70, PR - 60bpm",
-        investigations: "",
-        medications: [
-            {
-                name: "5% Dextrose",
-                dosage: "1 unit",
-                frequency: "stat",
-                duration: "stat",
-                route: "iv",
-                form: "Injection",
-                confidence: 0.95,
-                extraction_method: "mock_demo"
-            },
-            {
-                name: "ORS",
-                dosage: "2 sachets",
-                frequency: "as directed",
-                duration: "as directed",
-                route: "oral",
-                form: "Powder",
-                confidence: 0.95,
-                extraction_method: "mock_demo"
-            }
-        ],
-        lab_results: [],
-        follow_up: {
-            date: null,
-            advice: [
-                "Adequate fluid intake"
-            ]
-        },
-        source: 'VisionLLM_Mock',
-        confidence: 0.95
+        error: 'PROVIDERS_UNAVAILABLE',
+        message: 'All AI providers (Gemma, Nvidia NIM, Groq) are currently unavailable. Please try again later.'
     };
 }
 

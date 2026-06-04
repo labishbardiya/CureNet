@@ -31,7 +31,7 @@ class ScanResultScreen extends StatefulWidget {
 
 class _ScanResultScreenState extends State<ScanResultScreen> {
   bool _isSaving = false;
-  bool _showFhirJson = false;
+
   bool _hasSaved = false;
   bool _savedToLocker = false;
   String? _currentLocalId;
@@ -129,16 +129,24 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
         _savedToLocker = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Removed from Health Locker"),
-          backgroundColor: Color(0xFFD63B3B),
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.swap_horiz, color: Colors.white, size: 18),
+              SizedBox(width: 8),
+              Text("Moved back to Records"),
+            ],
+          ),
+          backgroundColor: const Color(0xFF00A3A3),
+          duration: const Duration(seconds: 3),
+          action: SnackBarAction(
+            label: 'VIEW',
+            textColor: Colors.white,
+            onPressed: () => Navigator.pushReplacementNamed(context, '/records'),
+          ),
         ),
       );
     }
-  }
-
-  void _goToRecords() {
-    Navigator.pushReplacementNamed(context, '/records');
   }
 
   void _scanAnother() {
@@ -316,14 +324,14 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: const Color(0xFF0D2240).withOpacity(0.2), blurRadius: 15, offset: const Offset(0, 8)),
+          BoxShadow(color: const Color(0xFF0D2240).withValues(alpha: 0.2), blurRadius: 15, offset: const Offset(0, 8)),
         ],
       ),
       child: Row(
         children: [
           CircleAvatar(
             radius: 28,
-            backgroundColor: const Color(0xFF00A3A3).withOpacity(0.2),
+            backgroundColor: const Color(0xFF00A3A3).withValues(alpha: 0.2),
             child: const Icon(Icons.person, color: Color(0xFF00A3A3), size: 32),
           ),
           const SizedBox(width: 16),
@@ -342,7 +350,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                     const SizedBox(width: 4),
                     Text(
                       "ABDM Validated ID: ${widget.abdmContext['patientId'] ?? 'PENDING'}",
-                      style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 11, fontWeight: FontWeight.w600),
+                      style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 11, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
@@ -371,7 +379,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 4)),
         ],
       ),
       child: Column(
@@ -428,7 +436,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 12, offset: const Offset(0, 6)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 12, offset: const Offset(0, 6)),
         ],
       ),
       child: Column(
@@ -444,7 +452,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE07B39).withOpacity(0.1),
+                    color: const Color(0xFFE07B39).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(Icons.medication_liquid_outlined, color: Color(0xFFE07B39), size: 24),
@@ -518,7 +526,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 12, offset: const Offset(0, 6)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 12, offset: const Offset(0, 6)),
         ],
       ),
       child: Column(
@@ -655,9 +663,9 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF00A3A3).withOpacity(0.05),
+        color: const Color(0xFF00A3A3).withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF00A3A3).withOpacity(0.2)),
+        border: Border.all(color: const Color(0xFF00A3A3).withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
@@ -725,7 +733,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: _savedToLocker ? const Color(0xFFD63B3B) : const Color(0xFF6B4E9B),
                 foregroundColor: Colors.white,
-                disabledBackgroundColor: const Color(0xFFD63B3B).withOpacity(0.5),
+                disabledBackgroundColor: const Color(0xFFD63B3B).withValues(alpha: 0.5),
                 disabledForegroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

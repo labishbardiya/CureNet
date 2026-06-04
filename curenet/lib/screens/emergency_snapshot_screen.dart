@@ -27,7 +27,7 @@ class _EmergencySnapshotScreenState extends State<EmergencySnapshotScreen>
   List<String> _activeMedications = [];
   List<String> _conditions = [];
   List<String> _keyVitals = [];
-  bool _dataLoaded = false;
+
   
   String _allergies = "";
   String _emergencyContactName = "";
@@ -127,7 +127,7 @@ class _EmergencySnapshotScreenState extends State<EmergencySnapshotScreen>
             .toList();
         _conditions = List<String>.from(Persona.conditions);
         _keyVitals = ['BP: 132/84 mmHg', 'HbA1c: 5.8%', 'Glucose: 102 mg/dL'];
-        _dataLoaded = true;
+
         _isSyncing = false;
         _lastUpdated = DateTime.now();
       });
@@ -140,7 +140,7 @@ class _EmergencySnapshotScreenState extends State<EmergencySnapshotScreen>
         _activeMedications = [];
         _conditions = [];
         _keyVitals = [];
-        _dataLoaded = true;
+
         _isSyncing = false;
         _lastUpdated = DateTime.now();
       });
@@ -220,7 +220,7 @@ class _EmergencySnapshotScreenState extends State<EmergencySnapshotScreen>
         _keyVitals = latestVitals.isNotEmpty
             ? latestVitals.entries.map((e) => '${e.key}: ${e.value}').toList()
             : ['No recent vitals found'];
-        _dataLoaded = true;
+
         _isSyncing = false;
         _lastUpdated = DateTime.now();
       });
@@ -277,7 +277,7 @@ class _EmergencySnapshotScreenState extends State<EmergencySnapshotScreen>
             if (_lastUpdated != null)
               Text(
                 "UPDATED: ${_lastUpdated!.hour}:${_lastUpdated!.minute.toString().padLeft(2, '0')} · ${_lastUpdated!.day}/${_lastUpdated!.month}",
-                style: TextStyle(fontSize: 8, color: Colors.white.withOpacity(0.5), fontWeight: FontWeight.w700),
+                style: TextStyle(fontSize: 8, color: Colors.white.withValues(alpha: 0.5), fontWeight: FontWeight.w700),
               ),
           ],
         ),
@@ -306,7 +306,7 @@ class _EmergencySnapshotScreenState extends State<EmergencySnapshotScreen>
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(28),
                 boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.4), blurRadius: 40, offset: const Offset(0, 20)),
+                  BoxShadow(color: Colors.black.withValues(alpha: 0.4), blurRadius: 40, offset: const Offset(0, 20)),
                 ],
               ),
               child: Column(
@@ -370,7 +370,7 @@ class _EmergencySnapshotScreenState extends State<EmergencySnapshotScreen>
                         Container(
                           width: double.infinity,
                           padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(color: const Color(0xFFFDE8E8), borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0xFFD32F2F).withOpacity(0.3))),
+                          decoration: BoxDecoration(color: const Color(0xFFFDE8E8), borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0xFFD32F2F).withValues(alpha: 0.3))),
                           child: Text(_allergies.isEmpty ? "None Reported" : _allergies, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Color(0xFFD32F2F))),
                         ),
                         
@@ -388,7 +388,7 @@ class _EmergencySnapshotScreenState extends State<EmergencySnapshotScreen>
                           spacing: 8, runSpacing: 8,
                           children: _conditions.map((c) => Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(color: const Color(0xFFE8F4FD), borderRadius: BorderRadius.circular(8), border: Border.all(color: const Color(0xFF2196F3).withOpacity(0.3))),
+                            decoration: BoxDecoration(color: const Color(0xFFE8F4FD), borderRadius: BorderRadius.circular(8), border: Border.all(color: const Color(0xFF2196F3).withValues(alpha: 0.3))),
                             child: Text(c, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF1565C0))),
                           )).toList(),
                         ),
@@ -425,7 +425,7 @@ class _EmergencySnapshotScreenState extends State<EmergencySnapshotScreen>
                         // ─── Emergency Footer ───
                         Container(
                           padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(color: const Color(0xFFE6F7EF), borderRadius: BorderRadius.circular(20), border: Border.all(color: const Color(0xFF22A36A).withOpacity(0.3))),
+                          decoration: BoxDecoration(color: const Color(0xFFE6F7EF), borderRadius: BorderRadius.circular(20), border: Border.all(color: const Color(0xFF22A36A).withValues(alpha: 0.3))),
                           child: Row(
                             children: [
                               const Icon(Icons.phone_in_talk_rounded, color: Color(0xFF22A36A), size: 28),

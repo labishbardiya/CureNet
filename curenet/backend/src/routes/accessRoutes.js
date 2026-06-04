@@ -18,7 +18,7 @@ router.post('/request', async (req, res) => {
 
         // Verify the share exists
         const share = await EmergencyShare.findOne({ shareId });
-        let patientUserId = share ? (share.userId || 'arjun') : 'arjun';
+        let patientUserId = share ? (share.userId || 'anonymous') : 'anonymous';
         if (!share) {
             // Try base64url decode fallback — still allow request
             try {
@@ -216,19 +216,7 @@ router.post('/revoke/:requestId', async (req, res) => {
     }
 });
 
-/**
- * @route DELETE /api/access/clear
- * @desc Clear all access requests (dev/debug utility).
- */
-router.delete('/clear', async (req, res) => {
-    try {
-        const result = await AccessRequest.deleteMany({});
-        console.log(`[Access] Cleared ${result.deletedCount} access requests.`);
-        res.json({ status: 'ok', deleted: result.deletedCount });
-    } catch (err) {
-        console.error('[Access] Error clearing:', err);
-        res.status(500).json({ error: 'Failed to clear access requests.' });
-    }
-});
+// DEBUG ENDPOINT REMOVED — DELETE /api/access/clear was a security risk
+// (it allowed anyone to wipe all access requests globally)
 
 module.exports = router;

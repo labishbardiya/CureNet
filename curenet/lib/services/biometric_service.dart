@@ -1,5 +1,6 @@
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 
 class BiometricService {
   static final LocalAuthentication _auth = LocalAuthentication();
@@ -36,7 +37,7 @@ class BiometricService {
       }
       return didAuthenticate;
     } on PlatformException catch (e) {
-      print('Biometric Error: $e');
+      debugPrint('Biometric Error: $e');
       return false;
     }
   }

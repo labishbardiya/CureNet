@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:provider/provider.dart';
 import '../core/auth_provider.dart';
-import '../core/theme.dart';
 import '../core/translated_text.dart';
 import 'package:flutter/services.dart';
-import 'package:curenet/core/navigation_helper.dart';
 
 class LoginOtpScreen extends StatefulWidget {
   const LoginOtpScreen({super.key});
@@ -21,7 +19,6 @@ class _LoginOtpScreenState extends State<LoginOtpScreen> {
   int _timerSeconds = 30;
   Timer? _timer;
   bool _showError = false;
-  bool _isLoading = false;
   String? _txnId;
   String? _loginId;
   String? _authMethod;

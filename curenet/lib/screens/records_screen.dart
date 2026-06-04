@@ -1,11 +1,7 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import '../core/theme.dart';
-import '../core/voice_helper.dart';
-import 'package:curenet/core/navigation_helper.dart';
+import '../core/bottom_nav.dart';
 import '../core/translated_text.dart';
 import '../core/data_mode.dart';
-import '../core/persona.dart';
 import '../services/ocr_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -52,21 +48,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
     if (mounted) setState(() => _isLoading = false);
   }
 
-  String _categoryToType(String? cat) {
-    switch (cat) {
-      case 'Prescriptions': return 'medication';
-      case 'Labs': return 'science';
-      default: return 'medical_services';
-    }
-  }
 
-  String _categoryToColor(String? cat) {
-    switch (cat) {
-      case 'Prescriptions': return '#E07B39';
-      case 'Labs': return '#00A3A3';
-      default: return '#6B4E9B';
-    }
-  }
 
   void _openRecord(Map<String, dynamic> record) async {
     if (record['hasFullData'] == true && record['uiData'] != null) {
@@ -163,10 +145,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
     }
   }
 
-  String _getMonth(int month) {
-    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    return months[month - 1];
-  }
+
   // ─── Trends View (selection-based, user picks which biomarkers to graph) ──
 
   // Track which markers the user has selected
@@ -219,7 +198,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
                 decoration: BoxDecoration(
                   color: const Color(0xFFE8F7F7),
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFF00A3A3).withOpacity(0.2)),
+                  border: Border.all(color: const Color(0xFF00A3A3).withValues(alpha: 0.2)),
                 ),
                 child: Row(
                   children: [
@@ -266,7 +245,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
                           width: isSelected ? 2 : 1,
                         ),
                         boxShadow: isSelected ? [
-                          BoxShadow(color: const Color(0xFF00A3A3).withOpacity(0.2), blurRadius: 8, offset: const Offset(0, 2)),
+                          BoxShadow(color: const Color(0xFF00A3A3).withValues(alpha: 0.2), blurRadius: 8, offset: const Offset(0, 2)),
                         ] : null,
                       ),
                       child: Row(
@@ -288,7 +267,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                             decoration: BoxDecoration(
-                              color: isSelected ? Colors.white.withOpacity(0.25) : const Color(0xFFF0F2F5),
+                              color: isSelected ? Colors.white.withValues(alpha: 0.25) : const Color(0xFFF0F2F5),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -593,7 +572,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
             child: Row(
               children: [
                 GestureDetector(onTap: () => Navigator.pop(context),
-                  child: const Text("←", style: TextStyle(fontSize: 26, color: Color(0xFF0D2240)))),
+                  child: const Icon(Icons.arrow_back_ios_new, size: 20, color: Color(0xFF0D2240))),
                 const SizedBox(width: 12),
                 const TranslatedText("Health Records", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Color(0xFF0D2240))),
                 const Spacer(),
@@ -679,7 +658,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomNav(),
+      bottomNavigationBar: CureNetBottomNav(context: context, activeIndex: 3),
     );
   }
 
@@ -745,61 +724,4 @@ class _RecordsScreenState extends State<RecordsScreen> {
     );
   }
 
-  Widget _buildBottomNav() {
-    return Container(
-      height: 78,
-      decoration: const BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: Color(0xFFD8DDE6)))),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _navItem(Icons.home, "Home", false, () => Navigator.pushReplacementNamed(context, '/home')),
-          _navItem(Icons.smart_toy, "ABHAy", false, () => Navigator.pushReplacementNamed(context, '/chat')),
-          _scanButton(context),
-          _navItem(Icons.list_alt, "Records", true, null),
-          _navItem(Icons.share, "Share", false, () => Navigator.pushNamed(context, '/qr-share')),
-        ],
-      ),
-    );
-  }
-
-  Widget _navItem(IconData icon, String label, bool active, VoidCallback? onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(icon, size: 22, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB)),
-        TranslatedText(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
-      ]),
-    );
-  }
-
-    Widget _scanButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (ModalRoute.of(context)?.settings.name != '/doc-scan') {
-          Navigator.pushNamed(context, '/doc-scan');
-        }
-      },
-      child: Transform.translate(
-        offset: const Offset(0, -24),
-        child: Container(
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [Color(0xFF00A3A3), Color(0xFF00C4C4)]),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF00A3A3).withOpacity(0.4),
-                blurRadius: 15,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: const Center(
-            child: Icon(Icons.camera_alt, size: 28, color: Colors.white),
-          ),
-        ),
-      ),
-    );
-  }
 }

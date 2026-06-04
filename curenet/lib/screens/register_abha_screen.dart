@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../core/theme.dart';
 import '../core/translated_text.dart';
 
 class RegisterAbhaScreen extends StatelessWidget {

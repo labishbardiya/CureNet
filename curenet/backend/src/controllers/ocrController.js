@@ -15,7 +15,7 @@ exports.initiateScan = async (req, res) => {
         }
 
         const jobId = generateId();
-        const userId = req.body.userId || req.query.userId || 'arjun';
+        const userId = req.body.userId || req.query.userId || 'anonymous';
         const patientName = req.body.patientName || req.query.patientName || '';
 
         // Register tracking in memory/mock DB

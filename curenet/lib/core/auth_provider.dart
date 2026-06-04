@@ -240,8 +240,8 @@ class AuthProvider extends ChangeNotifier {
     await SecureStorageService.clearAll();
     _status = AuthStatus.unauthenticated;
     _userProfile = null;
-    // Reset to default identity
-    DataMode.setUser(DataMode.arjunId);
+    // Reset to anonymous identity (not demo persona)
+    DataMode.setUser('user');
     notifyListeners();
   }
 }

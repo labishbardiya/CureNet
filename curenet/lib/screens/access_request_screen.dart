@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import '../core/app_config.dart';
 import '../core/data_mode.dart';
 import '../core/translated_text.dart';
+import '../core/bottom_nav.dart';
 
 class AccessRequestScreen extends StatefulWidget {
   const AccessRequestScreen({super.key});
@@ -176,23 +177,7 @@ class _AccessRequestScreenState extends State<AccessRequestScreen> {
       ),
 
       // Bottom Navigation
-      bottomNavigationBar: Container(
-        height: 78,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: Color(0xFFD8DDE6))),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _navItem(Icons.home, "Home", false, () => Navigator.pushReplacementNamed(context, '/home')),
-            _navItem(Icons.smart_toy, "ABHAy", false, () => Navigator.pushReplacementNamed(context, '/chat')),
-            _scanButton(context),
-            _navItem(Icons.list_alt, "Records", false, () => Navigator.pushReplacementNamed(context, '/records')),
-            _navItem(Icons.share, "Share", false, () => Navigator.pushReplacementNamed(context, '/qr-share')),
-          ],
-        ),
-      ),
+      bottomNavigationBar: CureNetBottomNav(context: context, activeIndex: -1),
     );
   }
 
@@ -266,7 +251,7 @@ class _AccessRequestScreenState extends State<AccessRequestScreen> {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: const Color(0xFFD8DDE6)),
             boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12, offset: const Offset(0, 4)),
+              BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 12, offset: const Offset(0, 4)),
             ],
           ),
           child: Column(
@@ -280,7 +265,7 @@ class _AccessRequestScreenState extends State<AccessRequestScreen> {
                       width: 52,
                       height: 52,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1A3A8A).withOpacity(0.08),
+                        color: const Color(0xFF1A3A8A).withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: const Center(child: Icon(Icons.person, size: 26, color: Color(0xFF1A3A8A))),
@@ -338,7 +323,7 @@ class _AccessRequestScreenState extends State<AccessRequestScreen> {
                 decoration: BoxDecoration(
                   color: const Color(0xFFFFF0F0),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFD63B3B).withOpacity(0.1)),
+                  border: Border.all(color: const Color(0xFFD63B3B).withValues(alpha: 0.1)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -421,41 +406,4 @@ class _AccessRequestScreenState extends State<AccessRequestScreen> {
     );
   }
 
-  Widget _navItem(IconData icon, String label, bool active, VoidCallback? onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 22, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB)),
-          TranslatedText(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
-        ],
-      ),
-    );
-  }
-
-  Widget _scanButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (ModalRoute.of(context)?.settings.name != '/doc-scan') {
-          Navigator.pushNamed(context, '/doc-scan');
-        }
-      },
-      child: Transform.translate(
-        offset: const Offset(0, -24),
-        child: Container(
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [Color(0xFF00A3A3), Color(0xFF00C4C4)]),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(color: const Color(0xFF00A3A3).withOpacity(0.4), blurRadius: 15, offset: const Offset(0, 8)),
-            ],
-          ),
-          child: const Center(child: Icon(Icons.camera_alt, size: 28, color: Colors.white)),
-        ),
-      ),
-    );
-  }
 }

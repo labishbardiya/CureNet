@@ -4,6 +4,19 @@ const EmergencyShare = require('../models/EmergencyShare');
 const { v4: uuidv4 } = require('uuid');
 
 /**
+ * Sanitize user input to prevent XSS in server-rendered HTML.
+ */
+function escapeHtml(str) {
+    if (typeof str !== 'string') return str || '';
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+/**
  * @route POST /api/emergency/share
  * @desc Stores emergency data temporarily and returns a short shareId
  */
@@ -13,7 +26,7 @@ router.post('/share', async (req, res) => {
         const shareId = uuidv4().split('-')[0]; // Short ID
         const newShare = new EmergencyShare({
             shareId,
-            userId: userId || 'arjun', // Fallback to 'arjun' if not provided
+            userId: userId || 'anonymous',
             data: data
         });
         await newShare.save();
@@ -53,6 +66,7 @@ router.get('/:id/json', async (req, res) => {
 /**
  * @route GET /api/emergency/:id
  * @desc Serves a downloadable Emergency Health Card as a standalone HTML page.
+ *       All user data is escaped to prevent XSS.
  */
 router.get('/:id', async (req, res) => {
     try {
@@ -72,12 +86,27 @@ router.get('/:id', async (req, res) => {
             }
         }
 
+        // Sanitize ALL user-provided data before injecting into HTML
+        const safe = {
+            name: escapeHtml(data.name || 'PATIENT'),
+            abha: escapeHtml(data.abha || ''),
+            age: escapeHtml(data.age || '—'),
+            gender: escapeHtml(data.gender || '—'),
+            bloodGroup: escapeHtml(data.bloodGroup || '?'),
+            allergies: escapeHtml(data.allergies || 'None Reported'),
+            physician: escapeHtml(data.physician || '').replace(/\\n/g, '<br>'),
+            emergencyName: escapeHtml(data.emergencyName || ''),
+            emergencyPhone: escapeHtml(data.emergencyPhone || ''),
+            medications: (data.medications || []).map(m => escapeHtml(m)),
+            vitals: (data.vitals || []).map(v => escapeHtml(v)),
+        };
+
         const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digital Emergency Pass — ${data.name || 'Patient'}</title>
+<title>Digital Emergency Pass — ${safe.name}</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, system-ui, sans-serif; background: #0A121E; color: #fff; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
@@ -109,31 +138,31 @@ router.get('/:id', async (req, res) => {
       <div class="identity">
         <div class="icon">🆘</div>
         <div>
-          <div class="name">${data.name || 'PATIENT'}</div>
-          <div class="abha">ABHA: ${data.abha || ''}</div>
+          <div class="name">${safe.name}</div>
+          <div class="abha">ABHA: ${safe.abha}</div>
         </div>
       </div>
       <div class="pills">
-        <div class="pill">AGE: ${data.age || '45'}</div>
-        <div class="pill">GENDER: ${data.gender || 'MALE'}</div>
-        <div class="pill urgent">BLOOD: ${data.bloodGroup || '?'}</div>
+        <div class="pill">AGE: ${safe.age}</div>
+        <div class="pill">GENDER: ${safe.gender}</div>
+        <div class="pill urgent">BLOOD: ${safe.bloodGroup}</div>
       </div>
     </div>
     <div class="body">
       <div class="section-title">⚠️ Critical Allergies</div>
-      <div class="alert-box">${data.allergies || 'None Reported'}</div>
+      <div class="alert-box">${safe.allergies}</div>
 
       <div class="section-title">💊 Active Medications</div>
-      ${(data.medications || []).map(m => '<div class="list-item"><div class="dot"></div>' + m + '</div>').join('')}
+      ${safe.medications.map(m => '<div class="list-item"><div class="dot"></div>' + m + '</div>').join('')}
 
       <div class="grid">
         <div>
           <div class="section-title">❤️ Latest Vitals</div>
-          ${(data.vitals || []).map(v => '<div class="vitals-val">' + v + '</div>').join('')}
+          ${safe.vitals.map(v => '<div class="vitals-val">' + v + '</div>').join('')}
         </div>
         <div>
           <div class="section-title">🩺 Physician</div>
-          <div style="font-weight:700; font-size:14px; color:#5A6880; line-height:1.4">${(data.physician || '').replace(/\n/g, '<br>')}</div>
+          <div style="font-weight:700; font-size:14px; color:#5A6880; line-height:1.4">${safe.physician}</div>
         </div>
       </div>
 
@@ -141,8 +170,8 @@ router.get('/:id', async (req, res) => {
         <div class="phone-icon">📞</div>
         <div>
           <div style="font-size:10px; font-weight:900; color:#22A36A; letter-spacing:1px">EMERGENCY CONTACT</div>
-          <div style="font-weight:800; font-size:16px">${data.emergencyName || ''}</div>
-          <div style="font-weight:900; font-size:18px; color:#22A36A">${data.emergencyPhone || ''}</div>
+          <div style="font-weight:800; font-size:16px">${safe.emergencyName}</div>
+          <div style="font-weight:900; font-size:18px; color:#22A36A">${safe.emergencyPhone}</div>
         </div>
       </div>
     </div>

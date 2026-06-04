@@ -2,13 +2,13 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:camera/camera.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
-import '../core/theme.dart';
-import 'package:curenet/core/navigation_helper.dart';
+import '../core/bottom_nav.dart';
 import '../core/translated_text.dart';
 import 'scan_result_screen.dart';
 import '../core/app_config.dart';
@@ -70,7 +70,7 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
           if (mounted) setState(() => _isCameraInitialized = true);
         }
       } catch (e) {
-        print("Camera initialization error: $e");
+        debugPrint("Camera initialization error: $e");
       }
     } else {
       if (mounted) {
@@ -98,7 +98,7 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
       }
       setState(() => _isFlashOn = !_isFlashOn);
     } catch (e) {
-      print("Flash toggle error: $e");
+      debugPrint("Flash toggle error: $e");
     }
   }
 
@@ -112,7 +112,7 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
       
       _uploadXFile(photo);
     } catch (e) {
-      print("Capture error: $e");
+      debugPrint("Capture error: $e");
     }
   }
 
@@ -135,6 +135,28 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to open gallery: $e')),
       );
+    }
+  }
+
+  Future<void> _pickPdfFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.single.path != null) {
+        final file = XFile(result.files.single.path!);
+        setState(() => _pickedFile = file);
+        _uploadXFile(file);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to pick PDF: $e')),
+        );
+      }
     }
   }
 
@@ -417,36 +439,48 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
       ),
 
       // Bottom Navigation
-      bottomNavigationBar: Container(
-        height: 78,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: Color(0xFFD8DDE6))),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _navItem(Icons.home, "Home", false, () => Navigator.pushReplacementNamed(context, '/home')),
-            _navItem(Icons.smart_toy, "ABHAy", false, () => Navigator.pushReplacementNamed(context, '/chat')),
-            _scanButton(context),
-            _navItem(Icons.list_alt, "Records", false, () => Navigator.pushReplacementNamed(context, '/records')),
-            _navItem(Icons.share, "Share", false, () => Navigator.pushReplacementNamed(context, '/qr-share')),
-          ],
-        ),
-      ),
+      bottomNavigationBar: CureNetBottomNav(context: context, activeIndex: 2),
     );
   }
 
   Widget _buildLoadingState() {
+    final bool isPdf = _pickedFile != null && _pickedFile!.path.toLowerCase().endsWith('.pdf');
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (_pickedFile != null && !kIsWeb) ...[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image.file(File(_pickedFile!.path), height: 300, fit: BoxFit.cover),
-            ),
+            if (isPdf)
+              // PDF files can't be rendered as images — show a document icon
+              Container(
+                height: 200,
+                width: 160,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF5F7FA),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: const Color(0xFF00A3A3).withValues(alpha: 0.3)),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.picture_as_pdf, color: Color(0xFFFF6B6B), size: 64),
+                    const SizedBox(height: 12),
+                    Text(
+                      _pickedFile!.name,
+                      style: const TextStyle(fontSize: 12, color: Color(0xFF5A6880), fontWeight: FontWeight.w600),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              )
+            else
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.file(File(_pickedFile!.path), height: 300, fit: BoxFit.cover),
+              ),
             const SizedBox(height: 32),
           ],
           const CircularProgressIndicator(color: Color(0xFF00A3A3)),
@@ -537,7 +571,7 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
             decoration: BoxDecoration(
               color: Colors.black87,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFF00A3A3).withOpacity(0.3)),
+              border: Border.all(color: const Color(0xFF00A3A3).withValues(alpha: 0.3)),
             ),
             child: const Column(
               children: [
@@ -557,59 +591,81 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
 
         // 4. Capture & Tools Overlay (Bottom Area)
         Positioned(
-          bottom: 40,
+          bottom: 30,
           left: 0,
           right: 0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              // Gallery Button
-              GestureDetector(
-                onTap: _pickFromGallery,
-                child: Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.15),
-                    shape: BoxShape.circle,
+              // Main controls row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // Gallery Button
+                  _controlButton(
+                    icon: Icons.photo_library,
+                    label: 'Gallery',
+                    onTap: _pickFromGallery,
                   ),
-                  child: const Icon(Icons.photo_library, color: Colors.white, size: 28),
-                ),
-              ),
-              
-              // Capture Button
-              GestureDetector(
-                onTap: _captureFromCamera,
-                child: Container(
-                  width: 80,
-                  height: 80,
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xFF00A3A3), width: 3),
-                  ),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF00A3A3),
-                      shape: BoxShape.circle,
+                  
+                  // Capture Button
+                  GestureDetector(
+                    onTap: _captureFromCamera,
+                    child: Container(
+                      width: 74,
+                      height: 74,
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: const Color(0xFF00A3A3), width: 3),
+                      ),
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF00A3A3),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.camera_alt, color: Colors.white, size: 32),
+                      ),
                     ),
-                    child: const Icon(Icons.camera_alt, color: Colors.white, size: 36),
                   ),
-                ),
+
+                  // Torch/Flash Button
+                  _controlButton(
+                    icon: _isFlashOn ? Icons.flash_on : Icons.flash_off,
+                    label: 'Flash',
+                    onTap: _toggleFlash,
+                    isActive: _isFlashOn,
+                  ),
+                ],
               ),
 
-              // Torch/Flash Button
+              const SizedBox(height: 16),
+
+              // PDF Upload Button
               GestureDetector(
-                onTap: _toggleFlash,
+                onTap: _pickPdfFile,
                 child: Container(
-                  padding: const EdgeInsets.all(14),
+                  margin: const EdgeInsets.symmetric(horizontal: 60),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   decoration: BoxDecoration(
-                    color: _isFlashOn ? const Color(0xFF00A3A3) : Colors.white.withOpacity(0.15),
-                    shape: BoxShape.circle,
+                    color: Colors.white.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
                   ),
-                  child: Icon(
-                    _isFlashOn ? Icons.flash_on : Icons.flash_off, 
-                    color: Colors.white, 
-                    size: 28
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.picture_as_pdf, color: Color(0xFFFF6B6B), size: 20),
+                      SizedBox(width: 8),
+                      Text(
+                        'Upload PDF Report',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -627,47 +683,37 @@ class _DocScanScreenState extends State<DocScanScreen> with SingleTickerProvider
     );
   }
 
-  Widget _navItem(IconData icon, String label, bool active, VoidCallback? onTap) {
+  Widget _controlButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    bool isActive = false,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 22, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB)),
-          TranslatedText(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: isActive ? const Color(0xFF00A3A3) : Colors.white.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: Colors.white, size: 24),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.7),
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );
   }
 
-    Widget _scanButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (ModalRoute.of(context)?.settings.name != '/doc-scan') {
-          Navigator.pushNamed(context, '/doc-scan');
-        }
-      },
-      child: Transform.translate(
-        offset: const Offset(0, -24),
-        child: Container(
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [Color(0xFF00A3A3), Color(0xFF00C4C4)]),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF00A3A3).withOpacity(0.4),
-                blurRadius: 15,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: const Center(
-            child: Icon(Icons.camera_alt, size: 28, color: Colors.white),
-          ),
-        ),
-      ),
-    );
-  }
 }

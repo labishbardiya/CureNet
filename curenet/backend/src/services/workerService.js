@@ -7,6 +7,7 @@ const { parsePrescriptionText } = require('./ocr/parserService');
 const { extractWithVisionLlm } = require('./ocr/visionLlmService');
 const { processDocument } = require('./documentProcessor');
 const { generateEmbedding } = require('./embeddingService');
+const { convertPdfToImages } = require('./pdfService');
 const EventEmitter = require('events');
 const Vital = require('../models/Vital');
 
@@ -19,7 +20,7 @@ const eventQueue = new JobQueue();
  * ═══════════════════════════════════════════════════════════════════
  *
  *  Pipeline:
- *    1. Preprocess image
+ *    1. Detect file type — if PDF, convert to images first
  *    2. Hybrid OCR (EasyOCR + TrOCR) via Python Bridge
  *    3. Local Parser (Regex/LLM shim)
  *    4. Vision LLM Fallback (Gemini) if confidence is low
@@ -35,14 +36,34 @@ const runJob = async (jobRecord) => {
 
     try {
         console.log(`[Worker] Starting Hybrid OCR pipeline for Job: ${jobRecord.jobId}`);
-        const _filePath = jobRecord.filePath;
+        let _filePath = jobRecord.filePath;
         tempFiles.push(_filePath);
+
+        // 1. PDF Detection — convert to image before Vision LLM
+        const ext = path.extname(_filePath).toLowerCase();
+        if (ext === '.pdf') {
+            console.log('[Worker] PDF detected. Converting to image(s) via pdf2pic...');
+            try {
+                const imagePaths = await convertPdfToImages(_filePath);
+                if (imagePaths && imagePaths.length > 0) {
+                    // Use the first page for OCR (most lab reports are single-page)
+                    _filePath = imagePaths[0];
+                    // Track all generated images for cleanup
+                    tempFiles.push(...imagePaths);
+                    console.log(`[Worker] PDF converted: ${imagePaths.length} page(s). Using: ${_filePath}`);
+                } else {
+                    throw new Error('PDF conversion produced no images.');
+                }
+            } catch (pdfErr) {
+                console.error(`[Worker] PDF conversion failed: ${pdfErr.message}`);
+                throw new Error(`Could not process this PDF: ${pdfErr.message}. Try uploading a screenshot or photo instead.`);
+            }
+        }
         
-        // 1. Preprocessing (Optional now, as Python engine handles it)
+        // 2. Preprocessing
         const processedImagePath = _filePath; 
 
-        // 2. PRIMARY PATH: Vision LLM (Production Path)
-        // Strictly use the API if available as requested by user.
+        // 3. PRIMARY PATH: Vision LLM (Production Path)
         console.log('[Worker] Strictly using Vision LLM API for high-accuracy extraction...');
         const visionData = await extractWithVisionLlm(processedImagePath, jobRecord.patientName);
         
@@ -55,6 +76,9 @@ const runJob = async (jobRecord) => {
             eventQueue.emit('jobFailed', jobRecord);
             return;
         }
+
+        let structuredData;
+        let raw_text;
 
         if (visionData) {
             structuredData = visionData;

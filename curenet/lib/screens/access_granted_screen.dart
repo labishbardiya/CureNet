@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../core/app_config.dart';
 import '../core/translated_text.dart';
+import '../core/bottom_nav.dart';
 
 class AccessGrantedScreen extends StatelessWidget {
   const AccessGrantedScreen({super.key});
@@ -86,7 +86,7 @@ class AccessGrantedScreen extends StatelessWidget {
                 width: 72,
                 height: 72,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF22A36A).withOpacity(0.2),
+                  color: const Color(0xFF22A36A).withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: const Center(
@@ -179,61 +179,8 @@ class AccessGrantedScreen extends StatelessWidget {
       ),
 
       // Bottom Navigation
-      bottomNavigationBar: Container(
-        height: 78,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: Color(0xFFD8DDE6))),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _navItem(Icons.home, "Home", true, () => Navigator.pushReplacementNamed(context, '/home')),
-            _navItem(Icons.smart_toy, "ABHAy", false, () => Navigator.pushReplacementNamed(context, '/chat')),
-            _scanButton(context),
-            _navItem(Icons.list_alt, "Records", false, () => Navigator.pushReplacementNamed(context, '/records')),
-            _navItem(Icons.share, "Share", false, () => Navigator.pushReplacementNamed(context, '/qr-share')),
-          ],
-        ),
-      ),
+      bottomNavigationBar: CureNetBottomNav(context: context, activeIndex: -1),
     );
   }
 
-  Widget _navItem(IconData icon, String label, bool active, VoidCallback? onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 22, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB)),
-          TranslatedText(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
-        ],
-      ),
-    );
-  }
-
-  Widget _scanButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (ModalRoute.of(context)?.settings.name != '/doc-scan') {
-          Navigator.pushNamed(context, '/doc-scan');
-        }
-      },
-      child: Transform.translate(
-        offset: const Offset(0, -24),
-        child: Container(
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [Color(0xFF00A3A3), Color(0xFF00C4C4)]),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(color: const Color(0xFF00A3A3).withOpacity(0.4), blurRadius: 15, offset: const Offset(0, 8)),
-            ],
-          ),
-          child: const Center(child: Icon(Icons.camera_alt, size: 28, color: Colors.white)),
-        ),
-      ),
-    );
-  }
 }

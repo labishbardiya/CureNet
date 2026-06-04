@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../core/app_config.dart';
@@ -57,7 +58,7 @@ class OcrService {
       return localId;
       
     } catch (e) {
-      print('Error saving record locally: $e');
+      debugPrint('Error saving record locally: $e');
       return DateTime.now().millisecondsSinceEpoch.toString();
     }
   }
@@ -79,7 +80,7 @@ class OcrService {
       
       await prefs.setStringList(_storageKey, recordsList);
     } catch (e) {
-      print('Error marking record for locker: $e');
+      debugPrint('Error marking record for locker: $e');
     }
   }
 
@@ -100,7 +101,7 @@ class OcrService {
       
       await prefs.setStringList(_storageKey, recordsList);
     } catch (e) {
-      print('Error removing record from locker: $e');
+      debugPrint('Error removing record from locker: $e');
     }
   }
 
@@ -112,7 +113,7 @@ class OcrService {
       
       return recordsList.map((str) => jsonDecode(str) as Map<String, dynamic>).toList();
     } catch (e) {
-      print('Error retrieving local records: $e');
+      debugPrint('Error retrieving local records: $e');
       return [];
     }
   }
@@ -282,7 +283,7 @@ class OcrService {
       
       await prefs.setString(_healthRecordsKey, jsonEncode(healthRecords));
     } catch (e) {
-      print('Error syncing to health_records: $e');
+      debugPrint('Error syncing to health_records: $e');
     }
   }
 
@@ -301,7 +302,7 @@ class OcrService {
       }
       return [];
     } catch (e) {
-      print('Error fetching backend records: $e');
+      debugPrint('Error fetching backend records: $e');
       return [];
     }
   }
@@ -423,7 +424,7 @@ class OcrService {
       }
       return [];
     } catch (e) {
-      print('Error fetching clinical atoms: $e');
+      debugPrint('Error fetching clinical atoms: $e');
       return [];
     }
   }
@@ -443,7 +444,7 @@ class OcrService {
       }
       return [];
     } catch (e) {
-      print('Semantic search failed: $e');
+      debugPrint('Semantic search failed: $e');
       return [];
     }
   }

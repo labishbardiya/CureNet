@@ -1,9 +1,9 @@
 /// ─── CureNet Demo Persona ──────────────────────────────────────────────────
-/// Single source of truth for Arjun Mishra's clinical profile.
-/// Used by: HomeScreen, ProfileScreen, RecordsScreen, EmergencySnapshotScreen,
-///          AiService, ChatScreen.
+/// Single source of truth for the demo account's clinical profile.
+/// Activated ONLY for phone number 9509958988 (demo mode).
 ///
 /// In production this class would be populated from ABDM profile API + local vault.
+/// For all other users, empty defaults are returned.
 
 class Persona {
   // ─── IDENTITY ──────────────────────────────────────────────────────────────

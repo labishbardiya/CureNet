@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';
-import '../core/theme.dart';
-import '../core/voice_helper.dart';
+
 import '../core/translated_text.dart';
 import '../core/persona.dart';
 import '../core/auth_provider.dart';
@@ -279,11 +278,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 16),
                   _buildCard(
                     title: "DOCTOR ACCESS LOG",
-                    children: [
-                      _accessRow("Dr. Suresh Kumar", "Apollo Spectra · Today 11:41 AM", "Active"),
-                      const Divider(height: 1, color: Color(0xFFD8DDE6)),
-                      _accessRow("Dr. Meena Kapoor", "Apollo Spectra · 22 Feb 2026", "Expired"),
-                    ],
+                    children: DataMode.activeUserId == DataMode.arjunId
+                        ? [
+                            _accessRow("Dr. Suresh Kumar", "Apollo Spectra · Today 11:41 AM", "Active"),
+                            const Divider(height: 1, color: Color(0xFFD8DDE6)),
+                            _accessRow("Dr. Meena Kapoor", "Apollo Spectra · 22 Feb 2026", "Expired"),
+                          ]
+                        : [
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              child: Center(
+                                child: Text('No access history yet', style: TextStyle(fontSize: 13, color: Color(0xFF9BA8BB))),
+                              ),
+                            ),
+                          ],
                   ),
                   const SizedBox(height: 40),
                 ],

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import '../core/theme.dart';
 import '../core/translated_text.dart';
 import 'package:flutter/services.dart';
 

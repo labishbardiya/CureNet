@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/app_language.dart';
 import '../core/translated_text.dart';
-import 'package:provider/provider.dart';
-import '../core/auth_provider.dart';
-import '../services/secure_storage_service.dart';
 
 class LoginOptionsScreen extends StatelessWidget {
   const LoginOptionsScreen({super.key});

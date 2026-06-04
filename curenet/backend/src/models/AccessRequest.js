@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const accessRequestSchema = new mongoose.Schema({
     requestId: { type: String, required: true, unique: true, index: true },
     shareId: { type: String, required: true },
-    patientUserId: { type: String, default: 'arjun', index: true },
+    patientUserId: { type: String, default: 'anonymous', index: true },
     doctorInfo: {
         name: { type: String, default: 'Doctor' },
         device: { type: String, default: 'Unknown Device' }

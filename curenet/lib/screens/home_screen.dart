@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/translated_text.dart';
+import '../core/bottom_nav.dart';
 import '../core/persona.dart';
 import '../core/data_mode.dart';
 import '../core/auth_provider.dart';
@@ -23,246 +24,24 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _requestPermissions();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkOnboarding();
+      _loadUserProfile();
     });
   }
 
-  Future<void> _checkOnboarding() async {
+  /// Loads the user's name from SharedPreferences (set during ABDM login)
+  /// or from the AuthProvider profile fetched from government credentials.
+  Future<void> _loadUserProfile() async {
     final prefs = await SharedPreferences.getInstance();
-    final bool hasCompleted = prefs.getBool('has_completed_onboarding') ?? false;
-    
     if (mounted) {
       setState(() {
         _onboardingName = prefs.getString('patient_name');
       });
     }
-
-    if (!hasCompleted && mounted) {
-      _showOnboardingDialog(prefs);
-    }
   }
 
-  void _showOnboardingDialog(SharedPreferences prefs) {
-    final nameController = TextEditingController();
-    final ageController = TextEditingController();
-    String gender = 'male';
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            return Dialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-              elevation: 16,
-              backgroundColor: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: Container(
-                          width: 64,
-                          height: 64,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFE8F7F7),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Center(
-                            child: Icon(Icons.person_pin, size: 36, color: Color(0xFF00A3A3)),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      const Center(
-                        child: Text(
-                          "Welcome to CureNet!",
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w900,
-                            color: Color(0xFF0D2240),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Center(
-                        child: Text(
-                          "Let's personalize your health experience.",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Color(0xFF5A6880),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      const Text(
-                        "FULL NAME",
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w900,
-                          color: Color(0xFF9BA8BB),
-                          letterSpacing: 1.0,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      TextField(
-                        controller: nameController,
-                        textCapitalization: TextCapitalization.words,
-                        decoration: InputDecoration(
-                          hintText: "Enter your full name",
-                          hintStyle: const TextStyle(color: Color(0xFF9BA8BB), fontSize: 14),
-                          filled: true,
-                          fillColor: const Color(0xFFF5F7FA),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xFF00A3A3), width: 1.5),
-                          ),
-                        ),
-                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF0D2240)),
-                      ),
-                      const SizedBox(height: 18),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 4,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  "AGE",
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w900,
-                                    color: Color(0xFF9BA8BB),
-                                    letterSpacing: 1.0,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                TextField(
-                                  controller: ageController,
-                                  keyboardType: TextInputType.number,
-                                  decoration: InputDecoration(
-                                    hintText: "Age",
-                                    hintStyle: const TextStyle(color: Color(0xFF9BA8BB), fontSize: 14),
-                                    filled: true,
-                                    fillColor: const Color(0xFFF5F7FA),
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(color: Color(0xFF00A3A3), width: 1.5),
-                                    ),
-                                  ),
-                                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF0D2240)),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            flex: 6,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  "GENDER",
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w900,
-                                    color: Color(0xFF9BA8BB),
-                                    letterSpacing: 1.0,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFF5F7FA),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton<String>(
-                                      value: gender,
-                                      isExpanded: true,
-                                      icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF0D2240)),
-                                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF0D2240)),
-                                      items: const [
-                                        DropdownMenuItem(value: 'male', child: Text("Male")),
-                                        DropdownMenuItem(value: 'female', child: Text("Female")),
-                                        DropdownMenuItem(value: 'other', child: Text("Other")),
-                                      ],
-                                      onChanged: (val) {
-                                        if (val != null) {
-                                          setModalState(() {
-                                            gender = val;
-                                          });
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 28),
-                      ElevatedButton(
-                        onPressed: () async {
-                          final name = nameController.text.trim();
-                          final age = ageController.text.trim();
-                          if (name.isEmpty || age.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Please fill in all fields")),
-                            );
-                            return;
-                          }
-                          
-                          await prefs.setString('patient_name', name);
-                          await prefs.setString('patient_age', age);
-                          await prefs.setString('patient_gender', gender);
-                          await prefs.setBool('has_completed_onboarding', true);
-                          
-                          if (context.mounted) {
-                            Navigator.pop(context);
-                            setState(() {
-                              _onboardingName = name;
-                            });
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF0D2240),
-                          minimumSize: const Size(double.infinity, 50),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        child: const Text(
-                          "Complete Setup",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
+  // Onboarding dialog removed — user profile (name, age, gender) will be
+  // fetched from ABDM government credentials after M1 ABHA enrollment.
+  // See AbdmService.getProfile() for the data source.
 
   Future<void> _requestPermissions() async {
     // Request camera permission on startup so it's ready for scanning
@@ -280,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
             : (_onboardingName ?? 'Live User'));
     final String abha = (user != null && user['abha'] != null && user['abha'].toString().trim().isNotEmpty)
         ? user['abha'].toString()
-        : (DataMode.activeUserId == DataMode.arjunId ? Persona.abhaNumber : '91-LIVE-0000-0001');
+        : (DataMode.activeUserId == DataMode.arjunId ? Persona.abhaNumber : 'ABHA Not Linked');
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
@@ -383,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 20, offset: const Offset(0, 8)),
+                      BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 20, offset: const Offset(0, 8)),
                     ],
                   ),
                   child: Column(
@@ -395,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             width: 48,
                             height: 48,
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: const Center(child: Icon(Icons.smart_toy, size: 28, color: Colors.white)),
@@ -406,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: const [
                                 TranslatedText(
-                                  "Ask Abhya AI",
+                                  "Ask ABHAy AI",
                                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Colors.white),
                                 ),
                                 TranslatedText(
@@ -423,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
+                          color: Colors.white.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const TranslatedText(
@@ -463,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (DataMode.activeUserId == DataMode.arjunId) {
                     // Arjun demo fallback
                     records = Persona.history.take(3).map((h) => <String, dynamic>{
-                      'title': (h['event'] as String? ?? 'Record').split(' — ').first,
+                      'title': (h['event']?.toString() ?? 'Record').split(' — ').first,
                       'date': h['date'],
                       'category': h['category'],
                     }).toList();
@@ -516,30 +295,13 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        height: 78,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: Color(0xFFD8DDE6))),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _bottomNavItem(Icons.home, "Home", true),
-            _bottomNavItem(Icons.smart_toy, "ABHAy", false, onTap: () => Navigator.pushNamed(context, '/chat')),
-            _scanButton(context),
-            _bottomNavItem(Icons.list_alt, "Records", false, onTap: () => Navigator.pushNamed(context, '/records')),
-            _bottomNavItem(Icons.share, "Share", false, onTap: () => Navigator.pushNamed(context, '/qr-share')),
-          ],
-        ),
-      ),
+      bottomNavigationBar: CureNetBottomNav(context: context, activeIndex: 0),
     );
   }
 
   // ── IDENTITY INFO PANEL (triple-tap on greeting) ──
   void _showDevToggle(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context, listen: false);
-    final user = auth.userProfile;
     final isArjun = DataMode.activeUserId == DataMode.arjunId;
     
     showDialog(
@@ -626,7 +388,7 @@ class _HomeScreenState extends State<HomeScreen> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 10)],
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 10)],
             ),
             child: Center(child: Icon(icon, size: 24, color: const Color(0xFF00A3A3))),
           ),
@@ -645,9 +407,9 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFFD8DDE6).withOpacity(0.5)),
+          border: Border.all(color: const Color(0xFFD8DDE6).withValues(alpha: 0.5)),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4)),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4)),
           ],
         ),
         child: Row(
@@ -696,62 +458,4 @@ class _HomeScreenState extends State<HomeScreen> {
     return Icons.assignment_rounded;
   }
 
-  Widget _bottomNavItem(IconData icon, String label, bool isActive, {VoidCallback? onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 44,
-            height: 40,
-            decoration: BoxDecoration(
-              color: isActive ? const Color(0xFFE8F7F7) : Colors.transparent,
-              borderRadius: BorderRadius.circular(13),
-            ),
-            child: Center(child: Icon(icon, size: 22, color: isActive ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
-          ),
-          TranslatedText(
-            label,
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              color: isActive ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-    Widget _scanButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (ModalRoute.of(context)?.settings.name != '/doc-scan') {
-          Navigator.pushNamed(context, '/doc-scan');
-        }
-      },
-      child: Transform.translate(
-        offset: const Offset(0, -24),
-        child: Container(
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [Color(0xFF00A3A3), Color(0xFF00C4C4)]),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF00A3A3).withOpacity(0.4),
-                blurRadius: 15,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: const Center(
-            child: Icon(Icons.camera_alt, size: 28, color: Colors.white),
-          ),
-        ),
-      ),
-    );
-  }
 }

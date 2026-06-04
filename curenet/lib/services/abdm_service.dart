@@ -73,7 +73,7 @@ class AbdmService {
     } catch (e) {
       // Return a dummy PEM for demo mode if sandbox is down
       return {
-        'publicKey': '-----BEGIN PUBLIC KEY-----\nMFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKj5K4u8a76iMvS2V7Q9r6m5B5yV3f6P\n9Z6E3Q1z2w4o5R8Z3Q6E9r6m5B5yV3f6P9Z6E3Q1z2w4o5R8Z3Q6E9wIDAQAB\n-----END PUBLIC KEY-----'
+        'publicKey': '-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnB5hs1hVMQ8dsyws+XIRtVcZt\naJCKWLpXUlYgHTfEBkEsPGMjhMrBDUZWiUfD8a1POuiWjgMNIINOALCdJllOfO7y\nyj8oll+inbhKR1jLVKaxnAaS07YaX9x/m7vxRhPozeqOrBxfu0Q+u+WLN5JkM1Rt\nKwaxdCrr8aygDdCmYQIDAQAB\n-----END PUBLIC KEY-----'
       };
     }
   }

@@ -4,7 +4,7 @@ import 'app_config.dart';
 import 'app_language.dart';
 import '../services/bhashini_translate_service.dart';
 
-/// Voice readout for Abhya – Bhashini TTS (22 Indian languages) with flutter_tts fallback.
+/// Voice readout for ABHAy – Bhashini TTS (22 Indian languages) with flutter_tts fallback.
 class VoiceHelper {
   static final FlutterTts _tts = FlutterTts();
   static bool _initialized = false;

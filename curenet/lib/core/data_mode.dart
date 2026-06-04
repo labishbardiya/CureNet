@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// User Identity Management for CureNet.
 ///
-/// Only one special identity exists: 'arjun' (demo persona).
+/// Only one special identity exists: 'arjun' (demo persona via 9509958988).
 /// ALL other phone numbers get a dynamic, isolated identity.
 ///
 /// Identity determines:
@@ -13,14 +13,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 class DataMode {
   DataMode._();
 
-  /// Kept for backward compatibility — true only when Arjun is active.
-  static final ValueNotifier<bool> isDemo = ValueNotifier<bool>(true);
+  /// True only when the demo persona (9509958988) is active.
+  static final ValueNotifier<bool> isDemo = ValueNotifier<bool>(false);
 
   /// The active user identity. Determines storage namespace + AI context.
-  static String _activeUserId = 'arjun';
+  static String _activeUserId = 'user';
   static String get activeUserId => _activeUserId;
 
-  /// The demo persona userId
+  /// The demo persona userId — activated only for phone 9509958988.
   static const String arjunId = 'arjun';
 
   /// Get a namespaced storage key for the current user.
@@ -39,7 +39,7 @@ class DataMode {
   /// Load saved preference on app start.
   static Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
-    _activeUserId = prefs.getString('active_user_id') ?? arjunId;
+    _activeUserId = prefs.getString('active_user_id') ?? 'user';
     isDemo.value = (_activeUserId == arjunId);
   }
 

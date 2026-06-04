@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/auth_provider.dart';
-import '../core/theme.dart';
 import '../core/translated_text.dart';
-import 'package:curenet/core/navigation_helper.dart';
 
 class LoginMobileScreen extends StatefulWidget {
   const LoginMobileScreen({super.key});

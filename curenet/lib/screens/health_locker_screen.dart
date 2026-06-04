@@ -1,7 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import '../core/theme.dart';
-import 'package:curenet/core/navigation_helper.dart';
+import '../core/bottom_nav.dart';
 import '../core/translated_text.dart';
 import '../services/biometric_service.dart';
 import '../services/ocr_service.dart';
@@ -18,7 +16,7 @@ class _HealthLockerScreenState extends State<HealthLockerScreen> {
   List<Map<String, dynamic>> _lockerRecords = [];
   bool _isLoading = true;
 
-  bool _isAuthenticated = false;
+
 
   @override
   void initState() {
@@ -33,13 +31,11 @@ class _HealthLockerScreenState extends State<HealthLockerScreen> {
         reason: "Authenticate to access Health Locker",
       );
       if (success) {
-        if (mounted) setState(() => _isAuthenticated = true);
         _loadLockerRecords();
       } else {
         if (mounted) Navigator.pop(context);
       }
     } else {
-      if (mounted) setState(() => _isAuthenticated = true);
       _loadLockerRecords();
     }
   }
@@ -92,7 +88,7 @@ class _HealthLockerScreenState extends State<HealthLockerScreen> {
             child: Row(
               children: [
                 GestureDetector(onTap: () => Navigator.pop(context),
-                  child: const Text("←", style: TextStyle(fontSize: 26, color: Colors.white))),
+                  child: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.white)),
                 const SizedBox(width: 12),
                 Expanded(child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,7 +174,7 @@ class _HealthLockerScreenState extends State<HealthLockerScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomNav(),
+      bottomNavigationBar: CureNetBottomNav(context: context, activeIndex: -1),
     );
   }
 
@@ -275,55 +271,4 @@ class _HealthLockerScreenState extends State<HealthLockerScreen> {
     ));
   }
 
-  Widget _buildBottomNav() {
-    return Container(
-      height: 78,
-      decoration: const BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: Color(0xFFD8DDE6)))),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-        _navItem(Icons.home, "Home", false, () => Navigator.pushReplacementNamed(context, '/home')),
-        _navItem(Icons.smart_toy, "ABHAy", false, () => Navigator.pushReplacementNamed(context, '/chat')),
-        _scanButton(context),
-        _navItem(Icons.list_alt, "Records", false, () => Navigator.pushReplacementNamed(context, '/records')),
-        _navItem(Icons.share, "Share", false, () => Navigator.pushReplacementNamed(context, '/qr-share')),
-      ]),
-    );
-  }
-
-  Widget _navItem(IconData icon, String label, bool active, VoidCallback? onTap) {
-    return GestureDetector(onTap: onTap, child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Icon(icon, size: 22, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB)),
-      TranslatedText(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: active ? const Color(0xFF00A3A3) : const Color(0xFF9BA8BB))),
-    ]));
-  }
-
-    Widget _scanButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (ModalRoute.of(context)?.settings.name != '/doc-scan') {
-          Navigator.pushNamed(context, '/doc-scan');
-        }
-      },
-      child: Transform.translate(
-        offset: const Offset(0, -24),
-        child: Container(
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [Color(0xFF00A3A3), Color(0xFF00C4C4)]),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF00A3A3).withOpacity(0.4),
-                blurRadius: 15,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: const Center(
-            child: Icon(Icons.camera_alt, size: 28, color: Colors.white),
-          ),
-        ),
-      ),
-    );
-  }
 }

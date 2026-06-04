@@ -60,6 +60,7 @@ dependencies:
   objectbox: ^2.5.1
   objectbox_flutter_libs: ^2.5.1
   record: ^7.0.0
+  file_picker: ^8.0.0            # PDF file upload support
 
 dev_dependencies:
   flutter_test:
