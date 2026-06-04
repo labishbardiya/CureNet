@@ -12,6 +12,19 @@ class BhashiniTtsService {
   static const String _computeUrl =
       'https://dhruva-api.bhashini.gov.in/services/inference/pipeline';
 
+  /// Shared audio player so we can stop playback externally.
+  static AudioPlayer? _player;
+  static bool _isSpeaking = false;
+
+  /// Whether TTS audio is currently playing.
+  static bool get isSpeaking => _isSpeaking;
+
+  /// Stop any currently playing TTS audio.
+  static Future<void> stop() async {
+    _isSpeaking = false;
+    await _player?.stop();
+  }
+
   /// ISO 639-1 language codes for Bhashini.
   static const Map<String, String> _langCodes = {
     'English': 'en', 'Hindi': 'hi', 'Bengali': 'bn', 'Telugu': 'te',
@@ -183,9 +196,12 @@ class BhashiniTtsService {
           '${dir.path}/bhashini_tts_${DateTime.now().millisecondsSinceEpoch}.wav');
       await file.writeAsBytes(bytes);
 
-      final player = AudioPlayer();
-      await player.play(DeviceFileSource(file.path));
-      await player.onPlayerComplete.first;
+      _player?.dispose();
+      _player = AudioPlayer();
+      _isSpeaking = true;
+      await _player!.play(DeviceFileSource(file.path));
+      await _player!.onPlayerComplete.first;
+      _isSpeaking = false;
       try {
         await file.delete();
       } catch (_) {
@@ -193,6 +209,7 @@ class BhashiniTtsService {
       }
       return true;
     } catch (_) {
+      _isSpeaking = false;
       return false;
     }
   }

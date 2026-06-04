@@ -149,21 +149,34 @@ class NotificationsScreen extends StatelessWidget {
               ],
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.volume_up, color: Color(0xFF00A3A3), size: 22),
-            onPressed: () async {
-              final ok = await VoiceHelper.speak(speakText);
-              if (!ok && context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(VoiceHelper.lastError ?? 'Voice readout failed.'),
-                    backgroundColor: const Color(0xFF0D2240),
-                  ),
-                );
-              }
+          ValueListenableBuilder<bool>(
+            valueListenable: VoiceHelper.isSpeaking,
+            builder: (context, speaking, _) {
+              return IconButton(
+                icon: Icon(
+                  speaking ? Icons.stop : Icons.volume_up,
+                  color: speaking ? Colors.red : const Color(0xFF00A3A3),
+                  size: 22,
+                ),
+                onPressed: () async {
+                  if (speaking) {
+                    await VoiceHelper.stop();
+                  } else {
+                    final ok = await VoiceHelper.speak(speakText);
+                    if (!ok && context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(VoiceHelper.lastError ?? 'Voice readout failed.'),
+                          backgroundColor: const Color(0xFF0D2240),
+                        ),
+                      );
+                    }
+                  }
+                },
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+              );
             },
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
           ),
           if (isUnread)
             Container(

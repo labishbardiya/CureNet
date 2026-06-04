@@ -429,10 +429,35 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _actionIcon(Icons.volume_up, () async {
-                      final plainText = text.replaceAll(RegExp(r'\*|#'), '');
-                      await VoiceHelper.speak(plainText, isAlreadyTranslated: true);
-                    }),
+                    ValueListenableBuilder<bool>(
+                      valueListenable: VoiceHelper.isSpeaking,
+                      builder: (context, speaking, _) {
+                        return GestureDetector(
+                          onTap: () async {
+                            if (speaking) {
+                              await VoiceHelper.stop();
+                            } else {
+                              final plainText = text.replaceAll(RegExp(r'\*|#'), '');
+                              await VoiceHelper.speak(plainText, isAlreadyTranslated: true);
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                color: speaking ? Colors.red : const Color(0xFFE5E7EB),
+                              ),
+                            ),
+                            child: Icon(
+                              speaking ? Icons.stop : Icons.volume_up,
+                              size: 14,
+                              color: speaking ? Colors.red : const Color(0xFF9CA3AF),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                     const SizedBox(width: 8),
                     _actionIcon(Icons.content_copy, () {
                       Clipboard.setData(ClipboardData(text: text));
@@ -615,6 +640,10 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             child: Row(
               children: [
+                IconButton(
+                  icon: Icon(Icons.arrow_back, color: textColor),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
                 IconButton(
                   icon: Icon(Icons.menu, color: textColor),
                   onPressed: () => _scaffoldKey.currentState?.openDrawer(),

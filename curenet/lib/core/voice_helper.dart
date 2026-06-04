@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import '../services/bhashini_tts_service.dart';
 import 'app_config.dart';
@@ -10,6 +11,9 @@ class VoiceHelper {
   static bool _initialized = false;
   static String? lastError;
 
+  /// Reactive speaking state — listeners can rebuild when this changes.
+  static final ValueNotifier<bool> isSpeaking = ValueNotifier<bool>(false);
+
   static Future<void> init() async {
     if (_initialized) return;
     await _tts.awaitSpeakCompletion(true);
@@ -17,6 +21,12 @@ class VoiceHelper {
     await _tts.setPitch(1.0);
     await _tts.setVolume(1.0);
     await _tts.setLanguage("en-IN");
+    _tts.setCompletionHandler(() {
+      isSpeaking.value = false;
+    });
+    _tts.setCancelHandler(() {
+      isSpeaking.value = false;
+    });
     _initialized = true;
   }
 
@@ -26,6 +36,9 @@ class VoiceHelper {
     if (text.trim().isEmpty) return false;
     await init();
     lastError = null;
+
+    // Stop any ongoing speech first
+    await stop();
 
     final lang = language ?? AppLanguage.selectedLanguage.value;
     String spokenText = text;
@@ -37,13 +50,18 @@ class VoiceHelper {
       } catch (_) {}
     }
 
+    isSpeaking.value = true;
+
     if (AppConfig.hasBhashiniKey) {
       final ok = await BhashiniTtsService.synthesizeAndPlay(
         text: spokenText,
         language: lang,
         gender: 'female',
       );
-      if (ok) return true;
+      if (ok) {
+        isSpeaking.value = false;
+        return true;
+      }
       lastError = 'Voice failed. Check internet or Bhashini API key.';
     }
     if (lang != 'English') {
@@ -53,6 +71,7 @@ class VoiceHelper {
     }
     final result = await _tts.speak(spokenText);
     if (result == 1 || result == "1" || result == "success") return true;
+    isSpeaking.value = false;
     lastError ??= 'Device text-to-speech not available on this device.';
     return false;
   }
@@ -71,7 +90,10 @@ class VoiceHelper {
     return 'en-IN';
   }
 
+  /// Stop all ongoing speech (both Bhashini and flutter_tts).
   static Future<void> stop() async {
+    isSpeaking.value = false;
+    await BhashiniTtsService.stop();
     await _tts.stop();
   }
 }
