@@ -1,11 +1,31 @@
 const axios = require('axios');
 const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const NVIDIA_API_KEY_11B = process.env.NVIDIA_API_KEY_11B;
 const NVIDIA_API_KEY_90B = process.env.NVIDIA_API_KEY_90B;
 const NVIDIA_API_KEY_NEMOTRON = process.env.NVIDIA_API_KEY_NEMOTRON;
+
+/**
+ * Read image or PDF sidecar file and return { base64, mimeType }.
+ * If the path ends with .pdf.json, it's a PDF sidecar created by pdfService
+ * (for servers where sharp can't render PDFs to images).
+ */
+function readImageContent(imagePath) {
+    if (imagePath.endsWith('.pdf.json')) {
+        const sidecar = JSON.parse(fs.readFileSync(imagePath, 'utf-8'));
+        return {
+            base64: sidecar.base64,
+            mimeType: sidecar.mimeType || 'application/pdf'
+        };
+    }
+    const base64 = fs.readFileSync(imagePath).toString('base64');
+    const ext = path.extname(imagePath).toLowerCase();
+    const mimeType = ext === '.png' ? 'image/png' : 'image/jpeg';
+    return { base64, mimeType };
+}
 
 /**
  * ═══════════════════════════════════════════════════════════════════
@@ -137,8 +157,7 @@ async function extractWithGemma4Local(imagePath, patientName = null, docType = n
             return null;
         }
 
-        const imageContent = fs.readFileSync(imagePath).toString('base64');
-        const mimeType = imagePath.endsWith('.png') ? 'image/png' : 'image/jpeg';
+        const { base64: imageContent, mimeType } = readImageContent(imagePath);
 
         console.log(`[VisionLLM] Requesting Gemma 4 31B Dense (${GEMMA4_MODEL}) via local Ollama...`);
 
@@ -206,8 +225,7 @@ async function extractWithGroq(imagePath, patientName = null, docType = null) {
     }
 
     try {
-        const imageContent = fs.readFileSync(imagePath).toString('base64');
-        const mimeType = imagePath.endsWith('.png') ? 'image/png' : 'image/jpeg';
+        const { base64: imageContent, mimeType } = readImageContent(imagePath);
 
         console.log('[VisionLLM] Falling back to Groq Cloud (Llama 4 Scout) extraction...');
 
@@ -277,8 +295,7 @@ async function classifyImageType(imagePath) {
         return defaultResult;
     }
     try {
-        const imageContent = fs.readFileSync(imagePath).toString('base64');
-        const mimeType = imagePath.endsWith('.png') ? 'image/png' : 'image/jpeg';
+        const { base64: imageContent, mimeType } = readImageContent(imagePath);
         
         const response = await axios.post(
             'https://integrate.api.nvidia.com/v1/chat/completions',
@@ -343,8 +360,7 @@ async function extractWithNvidia(imagePath, imageType = 'printed', patientName =
     }
 
     try {
-        const imageContent = fs.readFileSync(imagePath).toString('base64');
-        const mimeType = imagePath.endsWith('.png') ? 'image/png' : 'image/jpeg';
+        const { base64: imageContent, mimeType } = readImageContent(imagePath);
 
         const modelToUse = imageType === 'handwritten' 
             ? "meta/llama-3.2-90b-vision-instruct" 
@@ -433,20 +449,30 @@ function getMockData() {
  *    4. Mock data (demo fallback if all APIs fail)
  */
 exports.extractWithVisionLlm = async (imagePath, patientName = null) => {
-    // 1. Pre-classify the document (medical validity, lighting, type, writing)
-    const classification = await classifyImageType(imagePath);
-    console.log(`[VisionLLM] Classification: medical=${classification.isMedical}, lighting=${classification.lighting}, type=${classification.docType}, writing=${classification.writingType}`);
+    // PDF sidecars skip classification — user explicitly uploaded a document
+    const isPdfSidecar = imagePath.endsWith('.pdf.json');
+    
+    let docType = 'PRESCRIPTION';
+    let imageType = 'printed';
+    
+    if (!isPdfSidecar) {
+        // 1. Pre-classify the document (medical validity, lighting, type, writing)
+        const classification = await classifyImageType(imagePath);
+        console.log(`[VisionLLM] Classification: medical=${classification.isMedical}, lighting=${classification.lighting}, type=${classification.docType}, writing=${classification.writingType}`);
 
-    if (!classification.isMedical) {
-        return { error: 'NOT_MEDICAL', message: 'This does not appear to be a medical document. Please scan a valid prescription, lab report, or clinical document.' };
+        if (!classification.isMedical) {
+            return { error: 'NOT_MEDICAL', message: 'This does not appear to be a medical document. Please scan a valid prescription, lab report, or clinical document.' };
+        }
+
+        if (classification.lighting === 'POOR') {
+            return { error: 'POOR_LIGHTING', message: 'The image quality is too poor to read. Please ensure adequate lighting, hold the camera steady, and avoid shadows on the document.' };
+        }
+
+        docType = classification.docType;
+        imageType = classification.writingType === 'HANDWRITTEN' ? 'handwritten' : 'printed';
+    } else {
+        console.log('[VisionLLM] PDF sidecar detected — skipping image classification.');
     }
-
-    if (classification.lighting === 'POOR') {
-        return { error: 'POOR_LIGHTING', message: 'The image quality is too poor to read. Please ensure adequate lighting, hold the camera steady, and avoid shadows on the document.' };
-    }
-
-    const { docType, writingType } = classification;
-    const imageType = writingType === 'HANDWRITTEN' ? 'handwritten' : 'printed';
 
     // 2. Try Gemma 4 31B Dense via local Ollama (PRIMARY — edge-first)
     const gemma4Result = await extractWithGemma4Local(imagePath, patientName, docType);
