@@ -86,3 +86,7 @@ HACKATHON_POST.md
 FINISH_UP_ATHON_POST.md
 
 .vercel
+
+# ─── Standalone Sub-projects (deployed separately) ───────────────
+demo-video/
+jeevant-website/
